@@ -141,15 +141,42 @@ function downloadCV() {
 }
 
 // Tab switching
-function switchTab(tab) {
-  document.querySelectorAll(".tab-content").forEach((content) => {
-    content.classList.remove("active");
+// Function to switch between Professional and Organization tabs
+function switchTab(tabName) {
+  // Hide all tab contents
+  const tabContents = document.querySelectorAll('.tab-content');
+  tabContents.forEach(content => {
+    content.classList.remove('active');
   });
-  document.querySelectorAll(".tab-button").forEach((btn) => {
-    btn.classList.remove("active");
+
+  // Remove active class from all buttons
+  const tabButtons = document.querySelectorAll('.tab-button');
+  tabButtons.forEach(button => {
+    button.classList.remove('active');
   });
-  document.getElementById(tab).classList.add("active");
-  event.target.classList.add("active");
+
+  // Show selected tab content
+  const selectedTab = document.getElementById(tabName);
+  if (selectedTab) {
+    selectedTab.classList.add('active');
+  }
+
+  // Add active class to clicked button
+  const clickedButton = event ? event.target : document.querySelector(`[onclick*="${tabName}"]`);
+  if (clickedButton) {
+    clickedButton.classList.add('active');
+  }
+
+  // Update sliders when tab switches
+  if (tabName === 'professional') {
+    setTimeout(() => {
+      updateSliderProfessional();
+    }, 100);
+  } else if (tabName === 'organization') {
+    setTimeout(() => {
+      updateSliderOrganization();
+    }, 100);
+  }
 }
 
 // Modal content
@@ -239,3 +266,338 @@ function closeModal() {
 window.onclick = function (e) {
   if (e.target == document.getElementById("modal")) closeModal();
 };
+
+// ============================================
+// DUAL GALLERY SLIDER - Professional & Organization
+// ============================================
+
+// Gallery Data - PROFESSIONAL
+const galleryImagesProfessional = [
+  {
+    src: 'images/professional/enerma1.jpg', // Ganti dengan path foto Anda
+    caption: 'PT ENERMA - Data Analytics Dashboard'
+  },
+  {
+    src: 'images/professional/pelita1.jpg',
+    caption: 'PT Pelita Air Service - Team Meeting'
+  },
+  {
+    src: 'images/professional/pelita2.jpg',
+    caption: 'Data Analysis Project at Pelita'
+  },
+  {
+    src: 'images/professional/practicum1.jpg',
+    caption: 'Practicum Assistant - AI Lab Session'
+  },
+  {
+    src: 'images/professional/practicum2.jpg',
+    caption: 'Teaching OS Course - Laboratory'
+  },
+  {
+    src: 'images/professional/teaching1.jpg',
+    caption: 'Teaching Assistant - Classroom Session'
+  },
+  {
+    src: 'images/professional/teaching2.jpg',
+    caption: 'Mentoring Students in Programming'
+  },
+  {
+    src: 'images/professional/workspace.jpg',
+    caption: 'My Data Analysis Workspace'
+  }
+];
+
+// Gallery Data - ORGANIZATION
+const galleryImagesOrganization = [
+  {
+    src: 'images/org-photos/gdsc.jpg',
+    caption: 'GDSC Telkom University - ML Workshop'
+  },
+  {
+    src: 'images/org-photos/permidsi2024.jpg',
+    caption: 'PERMIDSI 2024 - Secretary Team'
+  },
+  {
+    src: 'images/org-photos/bigdata.jpg',
+    caption: 'Big Data Lab Activities'
+  },
+  {
+    src: 'images/org-photos/galaksi.jpg',
+    caption: 'GALAKSI 2023 - Committee'
+  },
+  {
+    src: 'images/org-photos/pkkmb-ds.jpg',
+    caption: 'PKKMB Data Science 2023'
+  },
+  {
+    src: 'images/org-photos/pkkmb-telkom.jpg',
+    caption: 'PKKMB Telkom University'
+  },
+  {
+    src: 'images/org-photos/permidsi2023.jpg',
+    caption: 'PERMIDSI 2023 - Team Photo'
+  },
+  {
+    src: 'images/org-photos/hima.jpg',
+    caption: 'Formatur HIMA DS'
+  },
+  {
+    src: 'images/org-photos/feeds.jpg',
+    caption: 'FEEDS 2022 Event'
+  }
+];
+
+let currentSlideProfessional = 0;
+let currentSlideOrganization = 0;
+
+// ============================================
+// PROFESSIONAL GALLERY FUNCTIONS
+// ============================================
+
+function initGalleryProfessional() {
+  const slider = document.getElementById('gallerySliderProfessional');
+  const indicatorsContainer = document.getElementById('indicatorsProfessional');
+  
+  if (!slider || !indicatorsContainer) return;
+
+  slider.innerHTML = '';
+  indicatorsContainer.innerHTML = '';
+
+  galleryImagesProfessional.forEach(image => {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.innerHTML = `
+      <img src="${image.src}" alt="${image.caption}" onerror="this.src='https://via.placeholder.com/400x300/d4a5a5/ffffff?text=Professional+Photo'">
+      <div class="gallery-caption">${image.caption}</div>
+    `;
+    slider.appendChild(item);
+  });
+
+  const totalPages = Math.ceil(galleryImagesProfessional.length / 3);
+  for (let i = 0; i < totalPages; i++) {
+    const indicator = document.createElement('div');
+    indicator.className = 'indicator' + (i === 0 ? ' active' : '');
+    indicator.onclick = () => goToSlideProfessional(i);
+    indicatorsContainer.appendChild(indicator);
+  }
+
+  // Add swipe functionality
+  addSwipeListeners('gallerySliderProfessional', 'professional');
+}
+
+function updateSliderProfessional() {
+  const slider = document.getElementById('gallerySliderProfessional');
+  if (!slider) return;
+
+  const items = slider.querySelectorAll('.gallery-item');
+  if (items.length === 0) return;
+
+  const itemWidth = items[0].offsetWidth;
+  const gap = 24;
+  const offset = currentSlideProfessional * (itemWidth * 3 + gap * 3);
+  slider.style.transform = `translateX(-${offset}px)`;
+
+  document.querySelectorAll('#indicatorsProfessional .indicator').forEach((ind, idx) => {
+    ind.classList.toggle('active', idx === currentSlideProfessional);
+  });
+}
+
+function nextSlideProfessional() {
+  const maxSlide = Math.ceil(galleryImagesProfessional.length / 3) - 1;
+  currentSlideProfessional = (currentSlideProfessional + 1) > maxSlide ? 0 : currentSlideProfessional + 1;
+  updateSliderProfessional();
+}
+
+function prevSlideProfessional() {
+  const maxSlide = Math.ceil(galleryImagesProfessional.length / 3) - 1;
+  currentSlideProfessional = currentSlideProfessional === 0 ? maxSlide : currentSlideProfessional - 1;
+  updateSliderProfessional();
+}
+
+function goToSlideProfessional(index) {
+  currentSlideProfessional = index;
+  updateSliderProfessional();
+}
+
+// ============================================
+// ORGANIZATION GALLERY FUNCTIONS
+// ============================================
+
+function initGalleryOrganization() {
+  const slider = document.getElementById('gallerySliderOrganization');
+  const indicatorsContainer = document.getElementById('indicatorsOrganization');
+  
+  if (!slider || !indicatorsContainer) return;
+
+  slider.innerHTML = '';
+  indicatorsContainer.innerHTML = '';
+
+  galleryImagesOrganization.forEach(image => {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.innerHTML = `
+      <img src="${image.src}" alt="${image.caption}" onerror="this.src='https://via.placeholder.com/400x300/9a7b8c/ffffff?text=Organization+Photo'">
+      <div class="gallery-caption">${image.caption}</div>
+    `;
+    slider.appendChild(item);
+  });
+
+  const totalPages = Math.ceil(galleryImagesOrganization.length / 3);
+  for (let i = 0; i < totalPages; i++) {
+    const indicator = document.createElement('div');
+    indicator.className = 'indicator' + (i === 0 ? ' active' : '');
+    indicator.onclick = () => goToSlideOrganization(i);
+    indicatorsContainer.appendChild(indicator);
+  }
+
+  // Add swipe functionality
+  addSwipeListeners('gallerySliderOrganization', 'organization');
+}
+
+function updateSliderOrganization() {
+  const slider = document.getElementById('gallerySliderOrganization');
+  if (!slider) return;
+
+  const items = slider.querySelectorAll('.gallery-item');
+  if (items.length === 0) return;
+
+  const itemWidth = items[0].offsetWidth;
+  const gap = 24;
+  const offset = currentSlideOrganization * (itemWidth * 3 + gap * 3);
+  slider.style.transform = `translateX(-${offset}px)`;
+
+  document.querySelectorAll('#indicatorsOrganization .indicator').forEach((ind, idx) => {
+    ind.classList.toggle('active', idx === currentSlideOrganization);
+  });
+}
+
+function nextSlideOrganization() {
+  const maxSlide = Math.ceil(galleryImagesOrganization.length / 3) - 1;
+  currentSlideOrganization = (currentSlideOrganization + 1) > maxSlide ? 0 : currentSlideOrganization + 1;
+  updateSliderOrganization();
+}
+
+function prevSlideOrganization() {
+  const maxSlide = Math.ceil(galleryImagesOrganization.length / 3) - 1;
+  currentSlideOrganization = currentSlideOrganization === 0 ? maxSlide : currentSlideOrganization - 1;
+  updateSliderOrganization();
+}
+
+function goToSlideOrganization(index) {
+  currentSlideOrganization = index;
+  updateSliderOrganization();
+}
+
+// ============================================
+// SWIPE/DRAG FUNCTIONALITY
+// ============================================
+
+function addSwipeListeners(sliderId, type) {
+  const slider = document.getElementById(sliderId);
+  if (!slider) return;
+
+  const container = slider.parentElement;
+  let isDragging = false;
+  let startPos = 0;
+  let currentTranslate = 0;
+  let prevTranslate = 0;
+
+  // Touch events
+  container.addEventListener('touchstart', touchStart);
+  container.addEventListener('touchmove', touchMove);
+  container.addEventListener('touchend', touchEnd);
+
+  // Mouse events
+  container.addEventListener('mousedown', touchStart);
+  container.addEventListener('mousemove', touchMove);
+  container.addEventListener('mouseup', touchEnd);
+  container.addEventListener('mouseleave', touchEnd);
+
+  function touchStart(event) {
+    isDragging = true;
+    startPos = getPositionX(event);
+    slider.classList.add('dragging');
+  }
+
+  function touchMove(event) {
+    if (!isDragging) return;
+    const currentPosition = getPositionX(event);
+    currentTranslate = prevTranslate + currentPosition - startPos;
+  }
+
+  function touchEnd() {
+    isDragging = false;
+    slider.classList.remove('dragging');
+    
+    const movedBy = currentTranslate - prevTranslate;
+
+    // If moved enough negative, go to next slide
+    if (movedBy < -50) {
+      if (type === 'professional') {
+        nextSlideProfessional();
+      } else {
+        nextSlideOrganization();
+      }
+    }
+
+    // If moved enough positive, go to previous slide
+    if (movedBy > 50) {
+      if (type === 'professional') {
+        prevSlideProfessional();
+      } else {
+        prevSlideOrganization();
+      }
+    }
+
+    currentTranslate = 0;
+    prevTranslate = 0;
+  }
+
+  function getPositionX(event) {
+    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+  }
+}
+
+// ============================================
+// INITIALIZE ON PAGE LOAD
+// ============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+  initGalleryProfessional();
+  initGalleryOrganization();
+  
+  // Update sliders on window resize
+  window.addEventListener('resize', () => {
+    updateSliderProfessional();
+    updateSliderOrganization();
+  });
+});
+
+// Auto-slide for Organization (optional - hapus jika tidak mau)
+let autoSlideOrganization = setInterval(nextSlideOrganization, 5000);
+
+// Pause auto-slide when hovering over gallery
+document.addEventListener('DOMContentLoaded', function() {
+  const professionalGallery = document.querySelector('#professional .gallery-section');
+  const organizationGallery = document.querySelector('#organization .gallery-section');
+  
+  if (professionalGallery) {
+    professionalGallery.addEventListener('mouseenter', () => {
+      clearInterval(autoSlideProfessional);
+    });
+    
+    professionalGallery.addEventListener('mouseleave', () => {
+      autoSlideProfessional = setInterval(nextSlideProfessional, 5000);
+    });
+  }
+  
+  if (organizationGallery) {
+    organizationGallery.addEventListener('mouseenter', () => {
+      clearInterval(autoSlideOrganization);
+    });
+    
+    organizationGallery.addEventListener('mouseleave', () => {
+      autoSlideOrganization = setInterval(nextSlideOrganization, 5000);
+    });
+  }
+});
