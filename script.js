@@ -1,603 +1,557 @@
-// Custom Cursor
-const cursor = document.querySelector(".custom-cursor");
-const cursorDot = document.querySelector(".cursor-dot");
+/* ═══════════════════════════════════════════════════
+   KEYLA PORTFOLIO — SCRIPT
+   SPA navigation · Sparkle cursor · Dark mode · i18n
+   ═══════════════════════════════════════════════════ */
 
-document.addEventListener("mousemove", (e) => {
-  cursor.style.left = e.clientX + "px";
-  cursor.style.top = e.clientY + "px";
-  cursorDot.style.left = e.clientX + "px";
-  cursorDot.style.top = e.clientY + "px";
-});
+// ─── TRANSLATIONS ──────────────────────────────────────
+const i18n = {
+  id: {
+    nav_home: 'Home', nav_about: 'Tentang', nav_edu: 'Pendidikan',
+    nav_exp: 'Pengalaman', nav_pub: 'Publikasi', nav_proj: 'Proyek',
+    nav_skills: 'Keahlian', nav_cert: 'Sertifikat', nav_ach: 'Prestasi',
+    nav_contact: 'Kontak',
 
-document.querySelectorAll("a, button, .interactive-card").forEach((el) => {
-  el.addEventListener("mouseenter", () => cursor.classList.add("hover"));
-  el.addEventListener("mouseleave", () => cursor.classList.remove("hover"));
-});
+    home_greeting: 'Halo, saya',
+    home_tagline: '"Di mana rasa ingin tahu bertemu data — membangun wawasan, mendorong perubahan."',
+    btn_connect: 'Mari Terhubung', btn_projects: 'Lihat Proyek', btn_cv: 'Unduh CV',
+    scroll_hint: 'jelajahi lebih',
 
-// Particles
-for (let i = 0; i < 20; i++) {
-  const particle = document.createElement("div");
-  particle.className = "particle";
-  particle.style.left = Math.random() * 100 + "%";
-  particle.style.animationDelay = Math.random() * 8 + "s";
-  particle.style.animationDuration = Math.random() * 5 + 5 + "s";
-  document.body.appendChild(particle);
-}
+    about_title: 'Tentang Saya', about_sub: 'Perkenalan singkat',
+    about_p1: 'Fresh graduate dari Telkom University dengan gelar Data Science, lulus dengan predikat <strong>Cum Laude</strong> (IPK 3.81/4.00). Perjalanan saya di bidang data science diperkaya dengan pengalaman nyata sebagai Data Analyst Intern di PT Pelita Air Service dan PT Enerma, mengubah data mentah menjadi wawasan yang actionable.',
+    about_p2: 'Selama 4 semester menjadi Teaching Assistant, saya membimbing lebih dari 100+ mahasiswa dalam memahami konsep teknis yang kompleks di bidang AI, Sistem Operasi, dan berbagai mata kuliah komputasi dasar.',
+    about_p3: 'Di luar kemampuan teknis, saya percaya bahwa data bisa menggerakkan perubahan nyata. Saya telah mempublikasikan 2 makalah internasional tentang aplikasi machine learning di bidang kesehatan dan meraih penghargaan Best Presenter di konferensi internasional.',
+    stat_gpa: 'IPK — Cum Laude', stat_pub: 'Publikasi Internasional',
+    stat_students: 'Mahasiswa Dibimbing', stat_award: 'Penghargaan Best Presenter',
+    interests_title: 'Minat & Passion',
 
-// Scroll Progress
-window.addEventListener("scroll", () => {
-  const scrollProgress = document.getElementById("scrollProgress");
-  const scrollHeight =
-    document.documentElement.scrollHeight - window.innerHeight;
-  const scrolled = (window.scrollY / scrollHeight) * 100;
-  scrollProgress.style.width = scrolled + "%";
+    edu_title: 'Pendidikan', edu_sub: 'Perjalanan akademis',
+    edu_degree1: 'Sarjana Data Science (S.Si.D.)',
+    edu_laude: 'Cum Laude · IPK 3.81/4.00',
+    edu_involvement: 'Keterlibatan Akademis',
+    edu_inv1: 'Asisten Pengajaran — 6 mata kuliah',
+    edu_inv2: 'Asisten Laboratorium (AI, SO, OOP)',
+    edu_inv3: 'Panitia Proyek Capstone',
+    edu_inv4: 'Perwakilan Akreditasi',
+    edu_inv5: 'Panitia Revisi Paper (2 konferensi)',
+    edu_inv6: 'Abdimas di SMAN 12 Bandung',
+    edu_achievements: 'Prestasi Akademis',
+    edu_ach1: '2 Publikasi Internasional (IEEE & JCSE Scopus)',
+    edu_ach2: 'Best Presenter Award — ICICyTA 2024',
+    edu_ach3: 'Proyek di ML, Visualisasi Data & BI',
+    edu_degree2: 'SMA Negeri 12 Bandung',
+    edu_hs: 'Sekolah Menengah Atas — IPA',
+    edu_activities: 'Kegiatan',
+    edu_act1: 'Organisasi Band & Perkusi',
+    edu_act2: 'Berbagai pertunjukan perkusi',
+    edu_act3: 'Panitia event & komite PR',
+    edu_org_roles: 'Jabatan Organisasi',
+    edu_award_text: 'Juara 1 — Lomba Storytelling (PORAK) · "Malin Kundang"',
 
-  // Navbar
-  const navbar = document.getElementById("navbar");
-  navbar.classList.toggle("scrolled", window.scrollY > 50);
+    exp_title: 'Pengalaman', exp_sub: 'Perjalanan profesional & organisasi',
+    tab_pro: '💼 Profesional', tab_org: '🤝 Organisasi',
+    exp1_role: 'Magang Data Analyst', exp2_role: 'Magang Data Analyst',
+    exp3_role: 'Asisten Praktikum', exp4_role: 'Magang Data Analyst',
+    exp5_role: 'Asisten Pengajaran',
+    exp1_brief: 'Membangun dashboard KPI otomatis dan mengkonsolidasikan data operasional untuk pelaporan Direksi.',
+    exp2_brief: 'Merancang dashboard interaktif untuk divisi keuangan, penjualan & kargo; menganalisis 2.000+ aset IT.',
+    exp3_brief: 'Membimbing 100+ mahasiswa di lab AI, SO, dan OOP dengan sesi debugging langsung dan umpan balik terstruktur.',
+    exp5_brief: 'Mengajar dan membimbing mahasiswa melalui 6 mata kuliah selama 4 semester dalam dasar-dasar data science.',
+    see_more: 'Lihat detail →', see_more2: 'Lihat detail →', see_more3: 'Lihat detail →',
+    see_more4: 'Lihat detail →', see_more5: 'Lihat detail →',
+    org1_role: 'Anggota ML Path', org2_role: 'Sekretaris I',
+    org3_role: 'Anggota Lab — Data Warehouse',
+    org4_role: 'Panitia Mahasiswa', org5_role: 'Koordinator Liaison Officer',
+    org6_role: 'Liaison Officer', org7_role: 'Penanggung Jawab',
+    view_cert: 'Lihat Sertifikat', view_cert2: 'Lihat Sertifikat',
+    view_cert3: 'Lihat Sertifikat', view_cert4: 'Lihat Sertifikat', view_cert5: 'Lihat Sertifikat',
 
-  // Reveal on scroll
-  document.querySelectorAll(".reveal").forEach((el) => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight - 100) {
-      el.classList.add("active");
-    }
-  });
+    pub_title: 'Publikasi', pub_sub: 'Kontribusi penelitian internasional',
+    pub1_title: 'Optimizing Heart Disease Classification Using Random Forest with Evolutionary Boosting',
+    pub1_award: '✦ Best Presenter Award',
+    pub2_title: 'Enhancing Stunting Prediction for Indonesian Children Using ML with SMOTE Data Balancing',
+    pub_ieee: 'IEEE Xplore', pub_doi: 'DOI', pub2_doi: 'DOI', pub2_date: 'Dipublikasikan: 4 Feb 2025',
 
-  // Active nav
-  const sections = document.querySelectorAll("section");
-  let current = "";
-  sections.forEach((section) => {
-    if (window.scrollY >= section.offsetTop - 200) {
-      current = section.getAttribute("id");
-    }
-  });
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.classList.remove("active");
-    if (link.getAttribute("href").substring(1) === current) {
-      link.classList.add("active");
-    }
-  });
-});
+    proj_title: 'Proyek', proj_sub: 'Solusi nyata yang pernah saya bangun',
+    proj1_cat: 'Machine Learning', proj1_name: 'Klasifikasi Penyakit Jantung',
+    proj1_desc: 'Random Forest dengan Evolutionary Boosting mencapai akurasi 86.67%. Dipublikasikan di IEEE.',
+    proj2_cat: 'Machine Learning', proj2_name: 'Klasifikasi Gizi Anak',
+    proj2_desc: 'Model multiclass dengan SMOTE mencapai akurasi 97.59%. Dipublikasikan di JCSE Scopus.',
+    proj3_cat: 'Business Intelligence', proj3_name: 'Dashboard BI Pertambangan',
+    proj3_desc: 'Dashboard monitoring produksi batu bara real-time untuk PT Kamalindo Sompurna.',
+    proj4_cat: 'Desain UI/UX', proj4_name: 'UI/UX Marketplace',
+    proj4_desc: 'Desain high-fidelity untuk platform marketplace mahasiswa Telkom University.',
+    proj5_cat: 'Data Engineering', proj5_name: 'Optimasi Distribusi LNG',
+    proj5_desc: 'Pipeline K-Means clustering untuk mengidentifikasi lokasi gudang sub-pengisian LNG optimal di Jawa Barat.',
+    proj_github: 'Lihat semua proyek di GitHub',
 
-// Navigation
-document.querySelectorAll(".nav-link").forEach((link) => {
-  link.addEventListener("click", function (e) {
-    if (
-      !this.nextElementSibling ||
-      !this.nextElementSibling.classList.contains("dropdown-content")
-    ) {
-      e.preventDefault();
-      document
-        .querySelector(this.getAttribute("href"))
-        .scrollIntoView({ behavior: "smooth" });
-      document
-        .querySelectorAll(".nav-link")
-        .forEach((l) => l.classList.remove("active"));
-      this.classList.add("active");
-    }
-  });
-});
+    skills_title: 'Keahlian', skills_sub: 'Kemampuan teknis & tools',
+    sg_lang: 'Bahasa Pemrograman', sg_ml: 'Machine Learning & AI',
+    sg_bi: 'Business Intelligence', sg_other: 'Tools & Lainnya', sg_lang2: 'Bahasa',
+    lang_id: 'Indonesia', lang_native: 'Bahasa Ibu', lang_pro: 'Profesional',
 
-// Mobile menu
-function toggleMobileMenu() {
-  const burger = document.querySelector(".burger-menu");
-  const mobileMenu = document.getElementById("mobileMenu");
-  burger.classList.toggle("active");
-  mobileMenu.classList.toggle("active");
-}
+    cert_title: 'Sertifikasi', cert_sub: 'Pembelajaran & pengembangan berkelanjutan',
+    cert1: 'Tes Kemahiran Bahasa Inggris', cert2: 'Belajar Analisis Data dengan Python',
+    cert3: 'Machine Learning Terapan', cert4: 'Belajar Machine Learning untuk Pemula',
+    cert5: 'Memulai Pemrograman dengan Python', cert6: 'Belajar Visualisasi Data',
+    cert7: 'Foundations of Data Science', cert8: 'Get Started with Python',
+    cert_view: 'Lihat', cert_view2: 'Lihat', cert_view3: 'Lihat',
+    cert_view4: 'Lihat', cert_view5: 'Lihat', cert_view6: 'Lihat',
 
-// Dropdown navigation
-function goToExperience(tab) {
-  event.preventDefault();
-  const experienceSection = document.querySelector("#experience");
-  experienceSection.scrollIntoView({ behavior: "smooth" });
-  setTimeout(() => {
-    document.querySelectorAll(".tab-content").forEach((content) => {
-      content.classList.remove("active");
-    });
-    document.querySelectorAll(".tab-button").forEach((btn) => {
-      btn.classList.remove("active");
-    });
-    document.getElementById(tab).classList.add("active");
-    document.querySelectorAll(".tab-button").forEach((btn) => {
-      if (
-        (tab === "professional" && btn.textContent.includes("Professional")) ||
-        (tab === "organization" && btn.textContent.includes("Organization"))
-      ) {
-        btn.classList.add("active");
-      }
-    });
-  }, 600);
-}
+    ach_title: 'Prestasi', ach_sub: 'Pencapaian & pengakuan',
+    ach1: 'Best Presenter Award',
+    ach1_detail: 'Konferensi Internasional ICICyTA 2024 — Penelitian Klasifikasi Penyakit Jantung',
+    ach2: 'Lulus Cum Laude',
+    ach2_detail: 'Telkom University — IPK 3.81/4.00, Sarjana Data Science',
+    ach3: '2 Publikasi Internasional',
+    ach3_detail: 'IEEE Xplore & jurnal JCSE Scopus — First Author di keduanya',
+    ach4: 'Juara 1 — Lomba Storytelling',
+    ach4_detail: 'PORAK (Pekan Kreativitas Siswa) — Membawakan cerita "Malin Kundang"',
 
-// Back to Top Button
-const backToTop = document.getElementById("backToTop");
+    contact_title: 'Mari Terhubung',
+    contact_sub: 'Terbuka untuk peluang data analytics, BI, dan management trainee',
+    location_label: 'Lokasi',
+    contact_msg: 'Saya aktif mencari peluang di bidang data analytics, business intelligence, dan program management trainee. Mari bangun sesuatu yang berarti bersama.',
+    btn_cv2: 'Unduh CV ✦',
+  },
+  en: {
+    nav_home: 'Home', nav_about: 'About', nav_edu: 'Education',
+    nav_exp: 'Experience', nav_pub: 'Publications', nav_proj: 'Projects',
+    nav_skills: 'Skills', nav_cert: 'Certs', nav_ach: 'Awards', nav_contact: 'Contact',
 
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 500) {
-    backToTop.classList.add("show");
-  } else {
-    backToTop.classList.remove("show");
+    home_greeting: "Hello, I'm",
+    home_tagline: '"Where curiosity meets data — building insights, driving change."',
+    btn_connect: "Let's Connect", btn_projects: 'View Projects', btn_cv: 'Download CV',
+    scroll_hint: 'explore more',
+
+    about_title: 'About Me', about_sub: 'A brief introduction',
+    about_p1: "Fresh graduate from Telkom University with a degree in Data Science, graduating with <strong>Cum Laude</strong> honors (GPA 3.81/4.00). My journey in data science has been enriched by hands-on experience as a Data Analyst Intern at PT Pelita Air Service and PT Enerma.",
+    about_p2: "As a Teaching Assistant for 4 semesters, I've guided over 100+ students through complex technical concepts in AI, Operating Systems, and various foundational computing courses.",
+    about_p3: "Beyond technical skills, I've published 2 international papers on machine learning applications in healthcare and received the Best Presenter Award at an international conference.",
+    stat_gpa: 'GPA — Cum Laude', stat_pub: 'International Publications',
+    stat_students: 'Students Guided', stat_award: 'Best Presenter Award',
+    interests_title: 'Interests & Passions',
+
+    edu_title: 'Education', edu_sub: 'Academic journey',
+    edu_degree1: 'Bachelor of Data Science (S.Si.D.)',
+    edu_laude: 'Cum Laude · GPA 3.81/4.00',
+    edu_involvement: 'Academic Involvement',
+    edu_inv1: 'Teaching Assistant — 6 courses',
+    edu_inv2: 'Laboratory Assistant (AI, OS, OOP)',
+    edu_inv3: 'Capstone Project Committee',
+    edu_inv4: 'Accreditation Representative',
+    edu_inv5: 'Paper Revision Committee (2 conferences)',
+    edu_inv6: 'Community Service at SMAN 12 Bandung',
+    edu_achievements: 'Academic Achievements',
+    edu_ach1: '2 International Publications (IEEE & JCSE Scopus)',
+    edu_ach2: 'Best Presenter Award — ICICyTA 2024',
+    edu_ach3: 'Projects in ML, Data Viz & BI',
+    edu_degree2: 'SMA Negeri 12 Bandung',
+    edu_hs: 'High School — Natural Science',
+    edu_activities: 'Activities',
+    edu_act1: 'Band & Percussion Organization',
+    edu_act2: 'Multiple percussion performances',
+    edu_act3: 'Event organizing & PR committees',
+    edu_org_roles: 'Organizational Roles',
+    edu_award_text: '1st Place — Storytelling Competition (PORAK) · "Malin Kundang"',
+
+    exp_title: 'Experience', exp_sub: 'Professional & organizational journey',
+    tab_pro: '💼 Professional', tab_org: '🤝 Organization',
+    exp1_role: 'Data Analyst Intern', exp2_role: 'Data Analyst Intern',
+    exp3_role: 'Practicum Assistant', exp4_role: 'Data Analyst Intern',
+    exp5_role: 'Teaching Assistant',
+    exp1_brief: 'Built automated KPI dashboards and consolidated operational data for Board of Directors reporting.',
+    exp2_brief: 'Designed interactive dashboards for finance, sales & cargo; analyzed 2,000+ IT asset records.',
+    exp3_brief: 'Guided 100+ students in AI, OS, and OOP lab sessions with live debugging and structured feedback.',
+    exp5_brief: 'Taught and mentored students through 6 courses over 4 semesters in data science fundamentals.',
+    see_more: 'See details →', see_more2: 'See details →', see_more3: 'See details →',
+    see_more4: 'See details →', see_more5: 'See details →',
+    org1_role: 'ML Path Member', org2_role: 'Secretary I',
+    org3_role: 'Laboratory Member — Data Warehouse',
+    org4_role: 'Student Committee', org5_role: 'Coordinator Liaison Officer',
+    org6_role: 'Liaison Officer', org7_role: 'Person in Charge',
+    view_cert: 'View Cert', view_cert2: 'View Cert',
+    view_cert3: 'View Cert', view_cert4: 'View Cert', view_cert5: 'View Cert',
+
+    pub_title: 'Publications', pub_sub: 'International research contributions',
+    pub1_title: 'Optimizing Heart Disease Classification Using Random Forest with Evolutionary Boosting',
+    pub1_award: '✦ Best Presenter Award',
+    pub2_title: 'Enhancing Stunting Prediction for Indonesian Children Using ML with SMOTE Data Balancing',
+    pub_ieee: 'IEEE Xplore', pub_doi: 'DOI', pub2_doi: 'DOI', pub2_date: 'Published: Feb 4, 2025',
+
+    proj_title: 'Projects', proj_sub: "Real-world solutions I've built",
+    proj1_cat: 'Machine Learning', proj1_name: 'Heart Disease Classification',
+    proj1_desc: 'Random Forest with Evolutionary Boosting achieving 86.67% test accuracy. Published at IEEE.',
+    proj2_cat: 'Machine Learning', proj2_name: 'Child Nutrition Classification',
+    proj2_desc: 'Multiclass model with SMOTE achieving 97.59% accuracy. Published in JCSE Scopus journal.',
+    proj3_cat: 'Business Intelligence', proj3_name: 'Mining BI Dashboard',
+    proj3_desc: 'Real-time coal production monitoring dashboard for PT Kamalindo Sompurna.',
+    proj4_cat: 'UI/UX Design', proj4_name: 'Marketplace UI/UX',
+    proj4_desc: 'High-fidelity design for Telkom University students marketplace platform.',
+    proj5_cat: 'Data Engineering', proj5_name: 'LNG Distribution Optimizer',
+    proj5_desc: 'K-Means clustering pipeline to identify optimal LNG sub-bottling warehouse locations in West Java.',
+    proj_github: 'See all projects on GitHub',
+
+    skills_title: 'Skills', skills_sub: 'Technical capabilities & tools',
+    sg_lang: 'Programming Languages', sg_ml: 'Machine Learning & AI',
+    sg_bi: 'Business Intelligence', sg_other: 'Tools & Others', sg_lang2: 'Languages',
+    lang_id: 'Indonesian', lang_native: 'Native', lang_pro: 'Professional',
+
+    cert_title: 'Certifications', cert_sub: 'Continuous learning & development',
+    cert1: 'English Proficiency Test', cert2: 'Data Analysis with Python',
+    cert3: 'Applied Machine Learning', cert4: 'Machine Learning for Beginners',
+    cert5: 'Introduction to Python Programming', cert6: 'Data Visualization',
+    cert7: 'Foundations of Data Science', cert8: 'Get Started with Python',
+    cert_view: 'View', cert_view2: 'View', cert_view3: 'View',
+    cert_view4: 'View', cert_view5: 'View', cert_view6: 'View',
+
+    ach_title: 'Achievements', ach_sub: 'Milestones & recognition',
+    ach1: 'Best Presenter Award',
+    ach1_detail: 'ICICyTA 2024 International Conference — Heart Disease Classification research',
+    ach2: 'Cum Laude Graduate',
+    ach2_detail: 'Telkom University — GPA 3.81/4.00, Bachelor of Data Science',
+    ach3: '2 International Publications',
+    ach3_detail: 'IEEE Xplore & JCSE Scopus-indexed journal — First Author on both',
+    ach4: '1st Place — Storytelling Competition',
+    ach4_detail: 'PORAK (Pekan Kreativitas Siswa) — Performed "Malin Kundang"',
+
+    contact_title: "Let's Connect",
+    contact_sub: 'Open to data analytics, BI, and management trainee opportunities',
+    location_label: 'Location',
+    contact_msg: "I'm actively looking for opportunities in data analytics, business intelligence, and management trainee programs. Let's build something meaningful together.",
+    btn_cv2: 'Download CV ✦',
   }
-});
-
-function scrollToTop() {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-}
-
-// Download CV function
-function downloadCV() {
-  // Buat link download untuk CV
-  const link = document.createElement("a");
-  link.href = "CV Aqeela Fathya N_Data Science.pdf"; // Ganti dengan path file CV Anda
-  link.download = "CV_Aqeela_Fathya_Najwa_Data_Science.pdf";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-// Tab switching
-// Function to switch between Professional and Organization tabs
-function switchTab(tabName) {
-  // Hide all tab contents
-  const tabContents = document.querySelectorAll('.tab-content');
-  tabContents.forEach(content => {
-    content.classList.remove('active');
-  });
-
-  // Remove active class from all buttons
-  const tabButtons = document.querySelectorAll('.tab-button');
-  tabButtons.forEach(button => {
-    button.classList.remove('active');
-  });
-
-  // Show selected tab content
-  const selectedTab = document.getElementById(tabName);
-  if (selectedTab) {
-    selectedTab.classList.add('active');
-  }
-
-  // Add active class to clicked button
-  const clickedButton = event ? event.target : document.querySelector(`[onclick*="${tabName}"]`);
-  if (clickedButton) {
-    clickedButton.classList.add('active');
-  }
-
-  // Update sliders when tab switches
-  if (tabName === 'professional') {
-    setTimeout(() => {
-      updateSliderProfessional();
-    }, 100);
-  } else if (tabName === 'organization') {
-    setTimeout(() => {
-      updateSliderOrganization();
-    }, 100);
-  }
-}
-
-// Modal content
-const modalContent = {
-  exp1: `<h2>🔥 PT Energi Negeri Meusenia (ENERMA)</h2><p><strong>Data Analyst Intern | Sept 2025 - Present</strong></p><p><strong>Location:</strong> South Jakarta, DKI Jakarta, Indonesia (Remote)</p><p><strong>Industry:</strong> Energy & Gas</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li><strong>Data Consolidation:</strong> Collected and consolidated operational data across multiple regions and departments to support strategic analysis</li><li><strong>Automated Dashboards:</strong> Built automated dashboards summarizing commercial, operational, and financial KPIs for executive review</li><li><strong>Performance Analysis:</strong> Conducted performance analysis and presented actionable insights to the Board of Directors, improving reporting efficiency by 15%</li><li><strong>Data Quality Management:</strong> Maintained active communication with regional teams to ensure data accuracy and timely reporting</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Impact:</h3><p>Enhanced executive decision-making through comprehensive data consolidation and automated reporting systems, resulting in 15% improvement in reporting efficiency.</p>`,
-
-  exp2: `<h2>✈️ PT Pelita Air Service</h2><p><strong>Data Analyst Intern | Jul 2024 - Sept 2024</strong></p><p><strong>Location:</strong> Central Jakarta, DKI Jakarta, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li><strong>Interactive Dashboards:</strong> Designed and implemented interactive dashboards for finance, sales, and cargo divisions using Excel and Tableau, enabling faster and more informed decision-making</li><li><strong>IT Asset Analysis:</strong> Analyzed 2,000+ IT asset records to assess equipment lifecycle, vendor performance, and distribution efficiency</li><li><strong>Requirements Gathering:</strong> Developed user stories and workflow diagrams to streamline requirements gathering for IT asset system enhancements</li><li><strong>Process Standardization:</strong> Drafted tailored SDLC guideline to standardize internal development processes and improve inter-team coordination</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Technologies Used:</h3><p>Excel, Tableau, SQL, Documentation Tools</p>`,
-
-  exp3: `<h2>💻 Practicum Assistant - Informatics Lab</h2><p><strong>Telkom University | Feb 2024 - Jun 2025</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Courses Assisted:</h3><ul style="line-height: 2;"><li><strong>Operating System Practicum (Sistem Operasi)</strong> - Sept 2024 – Jun 2025 (Xinu OS)</li><li><strong>Object-Oriented Programming Practicum (PBO)</strong> - Feb 2024 – Jan 2025 (Java)</li><li><strong>Basic Artificial Intelligence Practicum (DKA)</strong> - Feb 2025 – Jun 2025 (Python)</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Guided 100+ students in weekly lab sessions, focusing on practical application of Java, Xinu OS, and Python for AI</li><li>Delivered live debugging sessions and hands-on implementation assistance to enhance coding accuracy</li><li>Evaluated student lab submissions and provided structured, constructive feedback to improve comprehension and performance</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Impact:</h3><p>Successfully mentored over 100 students through complex technical concepts with hands-on guidance and real-time problem-solving support.</p>`,
-
-  exp4: `<h2>📚 PT Pelita Air Service (PATC)</h2><p><strong>Data Analyst Intern | Jan 2024 - Feb 2024</strong></p><p><strong>Location:</strong> Central Jakarta, DKI Jakarta, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li><strong>Data Cleaning & Analysis:</strong> Cleaned and analyzed 1,500+ operational training records to uncover patterns in batch training, certification completion, and schedule optimization</li><li><strong>Dashboard Development:</strong> Built visual dashboards using Excel and Looker Studio, improving transparency in training metrics and boosting scheduling efficiency by 10%</li><li><strong>Strategic Reporting:</strong> Generated performance trend reports to support strategic decisions in PATC's internal planning</li><li><strong>Data Quality Improvement:</strong> Recommended improvements to the data schema by identifying redundant data points and inconsistencies</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Technologies Used:</h3><p>Excel, Looker Studio, SQL, Data Analysis Tools</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Impact:</h3><p>Achieved 10% improvement in scheduling efficiency through data-driven insights and enhanced data quality for better strategic planning.</p>`,
-
-  exp5: `<h2>👩‍🏫 Lecturer Assistant - Telkom University</h2><p><strong>School of Computing | Sept 2023 - Jan 2025</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Courses Assisted (6 Courses):</h3><ul style="line-height: 2;"><li><strong>Mathematical Logic</strong> - Sept 2023 – Jan 2024 & Sept 2024 – Jan 2025</li><li><strong>ICT Global Insight</strong> - Sept 2023 – Jan 2024</li><li><strong>Digital Systems</strong> - Feb 2024 – Jun 2024</li><li><strong>Discrete Mathematics</strong> - Feb 2024 – Jun 2024</li><li><strong>Computer Organization and Architecture</strong> - Sept 2024 – Jan 2025</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Delivered tutorial sessions and addressed student inquiries on computing and mathematical fundamentals</li><li>Graded quizzes and assignments for 50–90 students per course, maintaining high accuracy and academic integrity</li><li>Supported exam preparation through focused review classes, contributing to an average 10–15% increase in student scores</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Impact:</h3><p>Successfully mentored hundreds of students across 4 semesters, contributing to measurable improvement in academic performance and comprehension of complex technical concepts.</p>`,
-
-  org1: `<h2>🎓 GDSC Telkom University</h2><p><strong>Machine Learning Path Member | Dec 2023 – Jun 2025</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>A learning community under Google Developer Student Clubs focusing on Machine Learning and Artificial Intelligence.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Activities & Achievements:</h3><ul style="line-height: 2;"><li>Participated in regular workshops and discussions on supervised learning, model evaluation, and deployment</li><li>Strengthened data analysis and modeling skills through collaborative projects across departments</li><li>Engaged with ML community to stay updated on latest technologies and best practices</li></ul>`,
-
-  org2: `<h2>📋 PERMIDSI 2024 - HIMA Data Science</h2><p><strong>Secretary I | Nov 2023 – Feb 2024</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Annual election event for the HIMA DS chairman (class of 2022).</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Prepared all official documentation and scheduling for the election process</li><li>Coordinated cross-division communication to ensure efficient and transparent implementation</li><li><strong>Successfully completed the entire program 100% on time</strong> with active participation from all candidates</li></ul>`,
-
-  org3: `<h2>🔬 Data Warehouse Study Group - Big Data Laboratory</h2><p><strong>Laboratory Member | Aug 2023 – Dec 2024</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>An internal study group focusing on Data Warehouse concepts and implementation.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Activities & Achievements:</h3><ul style="line-height: 2;"><li>Implemented ETL and data modeling using PostgreSQL and dbt in collaborative team projects</li><li>Developed a fundamental learning module used by new participants in subsequent batches</li><li>Gained hands-on experience in data warehousing best practices</li></ul>`,
-
-  org4: `<h2>🎪 GALAKSI 2023 - HIMA Data Science</h2><p><strong>Student Committee | Sep 2023 – Dec 2023</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Student initiation program for new Data Science students (class of 2023).</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Managed technical operations and participant engagement throughout the event</li><li>Coordinated with other committees to ensure smooth logistics and session execution</li><li><strong>Maintained >90% active participation rate</strong> and received positive event evaluations</li></ul>`,
-
-  org5: `<h2>🤝 PKKMB Data Science 2023</h2><p><strong>Coordinator of Liaison Officers | Aug 2023 – Sep 2023</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Orientation program for new Data Science students (class of 2023).</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Supervised 5 liaison officers assisting over 100 freshmen during the orientation</li><li>Organized duty schedules and communication flow among the LO team</li><li><strong>Improved participant satisfaction to 4.7/5</strong> based on post-event feedback</li></ul>`,
-
-  org6: `<h2>👥 PKKMB Telkom University 2023</h2><p><strong>Liaison Officer | May 2023 – Oct 2023</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>University-level orientation program for Telkom University freshmen.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Guided students throughout the orientation program, ensuring smooth communication</li><li>Acted as a bridge between freshmen and the organizing committee to resolve information gaps</li><li>Ensured positive onboarding experience for all new students</li></ul>`,
-
-  org7: `<h2>🎯 PERMIDSI 2023 - HIMA Data Science</h2><p><strong>Person in Charge (PIC) | Jan 2023 – Mar 2023</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Digital election event for the HIMA DS chairman (class of 2021).</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Led the overall election process, from debate sessions to online voting</li><li>Managed voting systems and documentation to ensure fairness and transparency</li><li><strong>Increased voter participation to >80%</strong>, ensuring the election's validity and inclusiveness</li></ul>`,
-
-  org8: `<h2>✏️ Formatur HIMA Data Science</h2><p><strong>Secretary I | Nov 2022 – Feb 2024</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Founding committee of the Data Science Student Association (HIMA DS).</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Designed the organizational structure, proposals, and legal documents for the formation process</li><li>Archived all official documents as the foundation for faculty approval</li><li><strong>Achieved official recognition of HIMA DS</strong> as the first formal student association for Data Science at Telkom University</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Significance:</h3><p>Played pivotal role in establishing the foundation for Data Science student community at Telkom University.</p>`,
-
-  org9: `<h2>📝 FEEDS 2022 - HIMA Data Science</h2><p><strong>General Secretary | Nov 2022 – Dec 2022</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Welcoming event for new Data Science students (class of 2022).</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Managed administrative and logistical needs to ensure all sessions followed the rundown</li><li>Drafted event reports and evaluations for future improvement</li><li><strong>Reached >90% freshman participation</strong> and enhanced engagement in early student activities</li></ul>`,
-
-  org10: `<h2>🎭 PERFECT (Permib Freedom in Creativity) - PERMIB</h2><p><strong>Event Staff | Nov 2021 – Jun 2022</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Student organization from Bandung conducting social and educational outreach programs for high school students.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Main Programs:</h3><ul style="line-height: 2;"><li><strong>Webinar Series:</strong> Organized educational webinars on higher education and career preparation</li><li><strong>Roadshow to High Schools:</strong> Promoted Telkom University and introduced academic programs across 15 high schools in Bandung</li><li><strong>UTBK Try-Out:</strong> Coordinated a nationwide UTBK simulation attended by 500+ students</li><li><strong>Edufair:</strong> Assisted in executing an educational fair connecting universities and students</li></ul>`,
-
-  org11: `<h2>📋 PKKMB Data Science 2022</h2><p><strong>General Secretary | Jul 2022 – Sep 2022</strong></p><p><strong>Location:</strong> Bandung, West Java, Indonesia (Onsite)</p><h3 style="margin-top:1.5rem; color:var(--mauve)">About:</h3><p>Orientation program for the first batch of Data Science students.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Responsibilities & Achievements:</h3><ul style="line-height: 2;"><li>Prepared official documents, event schedules, and post-event reports</li><li>Collaborated with faculty representatives to ensure timely execution</li><li><strong>Received a 4.8/5 satisfaction rating</strong> from the department for event organization</li></ul>`,
-
-  pub1: `<h2>📝 IEEE ICICyTA 2024 Publication</h2><p><strong>Enhancing Multiclass Classification of Child Nutritional Status Using KNN and Random Forest with SMOTE</strong></p><p><strong>Conference:</strong> 2024 International Conference on Intelligent Cybernetics Technology & Applications (ICICyTA)</p><p><strong>Conference Date:</strong> December 17, 2024</p><p><strong>Date Added to IEEE Xplore:</strong> March 11, 2025</p><p><strong>Authors:</strong> <span style="color: var(--rose); font-weight: bold;">Aqeela Fathya Najwa (First Author & Presenter)</span>, et al.</p><p><strong>Award:</strong> 🏆 Best Presenter – The 4th ICICyTA 2024</p><p style="margin-top: 1rem;"><a href="https://ieeexplore.ieee.org/document/10912991" target="_blank" rel="noopener" style="color: var(--mauve); text-decoration: underline; font-weight: 600;">🔗 IEEE Xplore Link</a></p><p><a href="https://doi.org/10.1109/ICICYTA64807.2024.10912991" target="_blank" rel="noopener" style="color: var(--chocolate); text-decoration: underline;">📄 DOI: 10.1109/ICICYTA64807.2024.10912991</a></p><h3 style="margin-top:1.5rem; color:var(--mauve)">Description:</h3><p>Published by IEEE, this research investigates the use of the Synthetic Minority Over-sampling Technique (SMOTE) to improve classification accuracy in child nutrition datasets. The study applies K-Nearest Neighbors (KNN) and Random Forest algorithms to evaluate model robustness and class balance performance.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Abstract:</h3><p>The study addresses data imbalance in child nutritional status prediction using BB/U (Weight-for-Age) and BB/TB (Weight-for-Height) indicators. By applying SMOTE, the models achieved balanced recall between major and minor classes, offering a scalable approach for improving health data analytics.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Results:</h3><ul style="line-height: 2;"><li>Achieved <strong>97.59% accuracy</strong> with Random Forest and <strong>96.66%</strong> with KNN</li><li>Significantly improved recall for minority classes</li><li>Provided actionable insights for data-driven nutrition intervention strategies in Indonesia</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">My Contributions:</h3><ul style="line-height: 2;"><li>Served as <strong>First Author and Presenter</strong>, responsible for research design, model implementation, and result validation</li><li>Awarded <strong>Best Presenter</strong> for outstanding paper delivery and contribution to healthcare analytics</li></ul>`,
-
-  pub2: `<h2>📄 JCSE Journal Publication</h2><p><strong>Enhancing Stunting Prediction for Indonesian Children Using Machine Learning with SMOTE Data Balancing</strong></p><p><strong>Journal:</strong> Journal of Computing Science and Engineering (JCSE)</p><p><strong>Index:</strong> Scopus-Indexed Journal</p><p><strong>Volume:</strong> Vol. 18, No. 4, pp. 203–213 (2024)</p><p><strong>Publication Date:</strong> February 4, 2025</p><p><strong>Authors:</strong> <span style="color: var(--rose); font-weight: bold;">Aqeela Fathya Najwa (First Author)</span>, et al.</p><p style="margin-top: 1rem;"><a href="https://doi.org/10.5626/JCSE.2024.18.4.203" target="_blank" rel="noopener" style="color: var(--chocolate); text-decoration: underline; font-weight: 600;">📄 DOI: 10.5626/JCSE.2024.18.4.203</a></p><h3 style="margin-top:1.5rem; color:var(--mauve)">Description:</h3><p>Published in a Scopus-indexed journal, this study compares the effectiveness of Support Vector Machine (SVM) and Decision Tree algorithms in detecting stunting among Indonesian children. The research emphasizes the critical role of SMOTE data balancing in improving machine learning model accuracy for health prediction.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Abstract:</h3><p>The research introduces a predictive model to identify stunting risks using real-world health data from community health centers. With SMOTE balancing, both models demonstrated significant performance improvement, validating the need for data preprocessing in imbalanced health datasets.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Results:</h3><ul style="line-height: 2;"><li>Decision Tree achieved <strong>97% F1-score</strong>, outperforming traditional models</li><li>SVM (RBF kernel) improved to <strong>94% F1-score</strong> after applying SMOTE</li><li>Demonstrated that balanced data significantly enhances early stunting detection accuracy</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">My Contributions:</h3><ul style="line-height: 2;"><li>Acted as <strong>First Author</strong>, responsible for data preprocessing, model training, and evaluation</li><li>Led manuscript drafting and revision for journal submission and peer review process</li></ul>`,
-
-  project1: `<h2>❤️ Heart Disease Classification Model</h2><h3 style="margin-top:1.5rem; color:var(--mauve)">Project Overview:</h3><p>Developed comprehensive heart disease classification using Random Forest optimized with Evolutionary Boosting, achieving 86.67% test accuracy.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Technical Approach:</h3><ul style="line-height: 2;"><li><strong>Algorithm:</strong> Random Forest with Evolutionary Boosting</li><li><strong>Preprocessing:</strong> Data normalization techniques</li><li><strong>Tuning:</strong> Grid Search for optimal parameters</li><li><strong>Evaluation:</strong> Precision-recall metrics</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Technologies:</h3><p>Python, Random Forest, AutoML, Scikit-learn</p>`,
-
-  project2: `<h2>👶 Multiclass Child Nutrition Classification</h2><h3 style="margin-top:1.5rem; color:var(--mauve)">Project Overview:</h3><p>Built multiclass classification for child nutritional status using BB/U and BB/TB indicators with SMOTE balancing.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Results:</h3><ul style="line-height: 2;"><li>Random Forest with SMOTE: <strong>97.59% accuracy</strong></li><li>Addressed class imbalance effectively</li><li>Supports equitable health interventions</li><li>Published in IEEE ICICyTA 2024</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Technologies:</h3><p>Python, KNN, Random Forest, SMOTE</p>`,
-
-  project3: `<h2>⛏️ Operational BI Dashboard - Mining Sector</h2><p><strong>Client:</strong> PT Kamalindo Sompurna</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Project Overview:</h3><p>Created integrated BI dashboard for real-time coal production and fuel monitoring.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Features:</h3><ul style="line-height: 2;"><li>Real-time production monitoring</li><li>Fuel consumption tracking</li><li>Multi-source data integration</li><li>Interactive drill-down visualizations</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Business Impact:</h3><ul style="line-height: 2;"><li>Improved operational efficiency</li><li>Enhanced decision-making</li><li>Better resource allocation</li></ul><p><strong>Technologies:</strong> Power BI, SQL, Real-time Analytics</p>`,
-
-  project4: `<h2>🛒 Marketplace UI/UX Prototype</h2><h3 style="margin-top:1.5rem; color:var(--mauve)">Project Overview:</h3><p>High-fidelity marketplace design for Telkom University students with focus on safe, user-friendly transactions.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Features:</h3><ul style="line-height: 2;"><li>Seamless product search and filtering</li><li>Student-tailored categories</li><li>Product review and rating system</li><li>In-app buyer-seller chat</li><li>Secure transaction mechanisms</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Design Principles:</h3><ul style="line-height: 2;"><li>User-centered approach</li><li>Clean, modern interface</li><li>Mobile-first responsive design</li></ul><p><strong>Tools:</strong> Figma, UI/UX Design, Prototyping</p>`,
-
-  // Certification Modals
-  cert1: `<h2>💼 Fundamental of Data Analyst</h2><p><strong>Fresh Graduate Academy - Digital Talent Scholarship 2025</strong></p><p><strong>Provider:</strong> Pusat Pengembangan Talenta Digital</p><p><strong>Period:</strong> 17 Juli – 17 Agustus 2025</p><p><strong>Organizer:</strong> Kementerian Komunikasi dan Informatika Republik Indonesia</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Program Description:</h3><p>Comprehensive training program covering fundamental concepts and practical skills in data analysis, including data collection, cleaning, visualization, and statistical analysis.</p>`,
-
-  cert2: `<h2>📊 Practical Real Business Application for Business Intelligence Analyst</h2><p><strong>Fresh Graduate Academy - Digital Talent Scholarship 2025</strong></p><p><strong>Provider:</strong> Pusat Pengembangan Talenta Digital</p><p><strong>Period:</strong> 1 – 30 September 2025</p><p><strong>Organizer:</strong> Kementerian Komunikasi dan Informatika Republik Indonesia</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Program Description:</h3><p>Advanced training focused on practical business intelligence applications, including dashboard development, KPI tracking, and data-driven business decision making.</p>`,
-
-  cert3: `<h2>🎯 Wawasan Karir dalam Bidang Data Analytics</h2><p><strong>Micro Skill - Digital Talent Scholarship 2025</strong></p><p><strong>Provider:</strong> Pusat Pengembangan Literasi Digital</p><p><strong>Organizer:</strong> Kementerian Komunikasi dan Informatika Republik Indonesia</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Program Description:</h3><p>Career insights program providing comprehensive understanding of career paths, opportunities, and required skills in the data analytics field.</p>`,
-
-  cert4: `<h2>🔬 Pengenalan Data Science dan Pemanfaatannya di Berbagai Sektor</h2><p><strong>Micro Skill - Digital Talent Scholarship 2025</strong></p><p><strong>Provider:</strong> Pusat Pengembangan Literasi Digital</p><p><strong>Organizer:</strong> Kementerian Komunikasi dan Informatika Republik Indonesia</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Program Description:</h3><p>Introductory program covering data science fundamentals and its applications across various industry sectors including healthcare, finance, and retail.</p>`,
-
-  dqlab2025: `<h2>📖 DQLab Courses 2025</h2><p><strong>17 Courses Completed</strong></p><p><strong>Platform:</strong> DQLab Academy</p><p><strong>Program:</strong> Digital Talent Scholarship 2025</p><h3 style="margin-top:1.5rem; color:var(--mauve)">July 2025:</h3><ul class="cert-list"><li>Fundamental SQL Using FUNCTION and GROUP BY <a href="https://academy.dqlab.id/Certificate_check/result/DQLABSQLT2VUWCAP" target="_blank" class="cert-link">🔗 View</a></li><li>Fundamental SQL Using INNER JOIN and UNION <a href="https://academy.dqlab.id/Certificate_check/result/DQLABSQLT2KMVADO" target="_blank" class="cert-link">🔗 View</a></li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">August 2025:</h3><ul class="cert-list"><li>Data Visualization with Python Matplotlib - Part 1 <a href="https://academy.dqlab.id/Certificate_check/result/DQLABDTWP1VQETVD" target="_blank" class="cert-link">🔗 View</a></li><li>Data Visualization with Python Matplotlib - Part 2 <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1BSRWAT" target="_blank" class="cert-link">🔗 View</a></li><li>Exploratory Data Analysis with Python for Beginner <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1DHKPLT" target="_blank" class="cert-link">🔗 View</a></li><li>Fundamental Data Visualization with Python <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1SBAJLL" target="_blank" class="cert-link">🔗 View</a></li><li>Master Data and Handling Duplicate Data with LinkR <a href="https://academy.dqlab.id/Certificate_check/result/DQLABLMDHDDBMCEJL" target="_blank" class="cert-link">🔗 View</a></li><li>Pengantar Storytelling dengan Visualisasi menggunakan Python <a href="https://academy.dqlab.id/Certificate_check/result/DQLABSDVP1MCLQTF" target="_blank" class="cert-link">🔗 View</a></li><li>Project Data Analysis for B2B Retail – Customer Analytics Report <a href="https://academy.dqlab.id/Certificate_check/result/DQLABPRJ10PBKTTO" target="_blank" class="cert-link">🔗 View</a></li><li>Project Data Analysis for Retail – Sales Performance Report <a href="https://academy.dqlab.id/Certificate_check/result/DQLABPRJC4HBFLTF" target="_blank" class="cert-link">🔗 View</a></li><li>Python for Data Professional Beginner – Part 2 <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1ICLGMW" target="_blank" class="cert-link">🔗 View</a></li><li>Python for Data Professional Beginner – Part 3 <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1DLVHMQ" target="_blank" class="cert-link">🔗 View</a></li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">September 2025:</h3><ul class="cert-list"><li>Business Insight Visualization <a href="https://academy.dqlab.id/Certificate_check/result/DQLABBIVAJCUBD" target="_blank" class="cert-link">🔗 View</a></li><li>Funnel Conversion Analysis <a href="https://academy.dqlab.id/Certificate_check/result/DQLABSSBCOIVOCJF" target="_blank" class="cert-link">🔗 View</a></li><li>Margin and Stock Risk <a href="https://academy.dqlab.id/Certificate_check/result/DQLABMSRFIRDPQ" target="_blank" class="cert-link">🔗 View</a></li><li>Sales Spike Business Case Overview <a href="https://academy.dqlab.id/Certificate_check/result/DQLABSSBCOWUVTBE" target="_blank" class="cert-link">🔗 View</a></li><li>SKU Outlier Exploration <a href="https://academy.dqlab.id/Certificate_check/result/DQLABSSBCOBPIPEQ" target="_blank" class="cert-link">🔗 View</a></li></ul>`,
-
-  cert2023all: `<h2>📚 Certifications 2023</h2><p><strong>15+ Certifications from Multiple Platforms</strong></p><h3 style="margin-top:1.5rem; color:var(--mauve)">DQLab Certificates (August 2023):</h3><ul class="cert-list"><li>Data Science Fundamentals <a href="https://academy.dqlab.id/Certificate_check/result/DQLABFREECLASS01RHFGMP" target="_blank" class="cert-link">🔗 View</a></li><li>Introduction to Data Science with Python <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1VPNIJN" target="_blank" class="cert-link">🔗 View</a></li><li>Introduction to Data Science with R <a href="https://academy.dqlab.id/Certificate_check/result/DQLABBGINRHPMSKG" target="_blank" class="cert-link">🔗 View</a></li><li>Python Fundamental for Data Science <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1EQFNFJ" target="_blank" class="cert-link">🔗 View</a></li><li>Python for Data Professional Beginner – Part 1 <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTP1CJBWOQ" target="_blank" class="cert-link">🔗 View</a></li><li>R Fundamental for Data Science <a href="https://academy.dqlab.id/Certificate_check/result/DQLABINTR1EEINUR" target="_blank" class="cert-link">🔗 View</a></li><li>Fundamental SQL Using SELECT Statement <a href="https://academy.dqlab.id/Certificate_check/result/DQLABSQLT1HOOHAN" target="_blank" class="cert-link">🔗 View</a></li><li>Guide to Learn Python with AI <a href="https://academy.dqlab.id/Certificate_check/result/DQLABAI001EBMVKJ" target="_blank" class="cert-link">🔗 View</a></li><li>Guide to Learn R with AI <a href="https://academy.dqlab.id/Certificate_check/result/DQLABAI002FQDGED" target="_blank" class="cert-link">🔗 View</a></li><li>Guide to Learn SQL with AI <a href="https://academy.dqlab.id/Certificate_check/result/DQLABAI003RHPSVC" target="_blank" class="cert-link">🔗 View</a></li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Other Platforms:</h3><ul class="cert-list"><li>Data Science Winter Club Explorer 2023 - Generation Girl (Dec 2023) <a href="https://mail.google.com/mail/u/0?ui=2&ik=8b45bf9e2a&attid=0.1&permmsgid=msg-f:1786421672020348694&th=18caa50bbbd50f16&view=att&zw&disp=inline" target="_blank" class="cert-link">🔗 View</a></li><li>Data Science 101 - Cognitive Class (Aug 2023) <a href="https://courses.cognitiveclass.ai/certificates/2936b568052f49c4ab0e9da478d34969" target="_blank" class="cert-link">🔗 View</a></li><li>Data Visualization for Data Analysis – MySkill (Jul 2023) <a href="https://drive.google.com/file/d/1MZw7Mccktqy5Juq7xQGFgsWXe9TKDqjM/view?usp=sharing" target="_blank" class="cert-link">🔗 View</a></li><li>Intro to Data Analytics – RevoU (Jul 2023) <a href="https://click.mlflow.com/link/c/YT0yMjU1NzEzNzQ4NDYxMjk1NzExJmM9ZjZ6NyZlPTAmYj0xMDYzMDg3ODgyJmQ9bDhnOXY5eQ==.tNFj7vaL8xfAEV6uyVS8bRUBx-ITJ54AkcnMmZkgfN4" target="_blank" class="cert-link">🔗 View</a></li></ul>`,
-
-  cert2022all: `<h2>💼 Google Career Certificates 2022</h2><p><strong>IT Support Professional Specialization</strong></p><p><strong>Provider:</strong> Google via Coursera</p><p><strong>Completion Date:</strong> September 2022</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Specialization Certificate:</h3><ul class="cert-list"><li>IT Support Google - Professional Certificate <a href="https://www.coursera.org/account/accomplishments/specialization/certificate/D73MRT9SQ4P3" target="_blank" class="cert-link">🔗 View</a></li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Course Certificates:</h3><ul class="cert-list"><li>Dasar-Dasar Dukungan Teknis <a href="https://www.coursera.org/account/accomplishments/certificate/TR44C54AKRHD" target="_blank" class="cert-link">🔗 View</a></li><li>Seluk Beluk Jaringan Komputer <a href="https://www.coursera.org/account/accomplishments/certificate/2G7TPNS8GE98" target="_blank" class="cert-link">🔗 View</a></li><li>Sistem Operasi dan Anda: Menjadi Pengguna yang Berdaya <a href="https://www.coursera.org/account/accomplishments/certificate/C45JZZWDYUC8" target="_blank" class="cert-link">🔗 View</a></li><li>Keamanan IT: Pertahanan terhadap Kejahatan Digital <a href="https://www.coursera.org/account/accomplishments/certificate/ZTTQWFKNJDAY" target="_blank" class="cert-link">🔗 View</a></li><li>Administrasi Sistem dan Layanan Infrastruktur TI <a href="https://www.coursera.org/account/accomplishments/certificate/3KXB99KUKZ83" target="_blank" class="cert-link">🔗 View</a></li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Skills Covered:</h3><p style="margin-top: 0.5rem;">Technical Support, Networking, Operating Systems, System Administration, IT Security, Infrastructure Services, Troubleshooting, Customer Service</p>`,
-
-  achieve1: `<h2>🏆 Best Presenter Award</h2><p><strong>The 4th International Conference on Intelligent Cybernetics Technology & Applications (ICICyTA) 2024</strong></p><p><strong>Date:</strong> December 17, 2024</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Achievement Details:</h3><p>Awarded Best Presenter for outstanding presentation of research paper titled "Enhancing Multiclass Classification of Child Nutritional Status Using KNN and Random Forest with SMOTE"</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Significance:</h3><ul style="line-height: 2;"><li>Recognized among international presenters for exceptional research communication</li><li>Demonstrated ability to effectively convey complex technical concepts</li><li>Contributed to healthcare analytics discourse at international level</li></ul>`,
-
-  achieve2: `<h2>🥇 1st Place Story Telling Competition</h2><p><strong>PORAK - Pekan Kreativitas Siswa</strong></p><p><strong>Period:</strong> High School (SMA Negeri 12 Bandung)</p><p><strong>Story Performed:</strong> Malin Kundang</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Achievement Details:</h3><p>Won first place in storytelling competition by performing traditional Indonesian folklore "Malin Kundang" with compelling narrative delivery and stage presence.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Skills Demonstrated:</h3><ul style="line-height: 2;"><li>Public speaking and presentation skills</li><li>Creative performance and expression</li><li>Cultural appreciation and storytelling</li></ul>`,
-
-  achieve3: `<h2>🎓 Accreditation Representative</h2><p><strong>Data Science Program - Telkom University</strong></p><p><strong>Year:</strong> 2024</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Role & Responsibilities:</h3><p>Selected to represent the Data Science program during the official accreditation assessment process, serving as a key point of contact between the accreditation team and the academic program.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Significance:</h3><ul style="line-height: 2;"><li>Demonstrated strong academic standing and communication skills</li><li>Trusted by faculty to represent program quality and student perspective</li><li>Contributed to successful program accreditation</li></ul>`,
-
-  achieve4: `<h2>💼 Entrepreneurship - Basreng Business</h2><p><strong>Role:</strong> Treasurer</p><p><strong>Period:</strong> University Period</p><p><strong>Team Size:</strong> 10 Members</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Business Overview:</h3><p>Led financial management for a student-run Basreng (Indonesian snack) business, overseeing budget planning, revenue tracking, and financial reporting.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Achievements:</h3><ul style="line-height: 2;"><li>Successfully managed business finances and cash flow</li><li>Achieved significant revenue targets through strategic pricing</li><li>Maintained accurate financial records and reporting</li><li>Collaborated with team of 10 to ensure business profitability</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Skills Developed:</h3><ul style="line-height: 2;"><li>Financial management and budgeting</li><li>Business operations and planning</li><li>Team coordination and leadership</li><li>Entrepreneurial mindset</li></ul>`,
-
-  achieve5: `<h2>📝 Revision Team Committee</h2><p><strong>International Conferences</strong></p><p><strong>Conferences:</strong></p><ul style="line-height: 2;"><li><strong>ICoDSA 2025</strong> - International Conference on Data Science and Applications</li><li><strong>ICICyTA 2024</strong> - International Conference on Intelligent Cybernetics Technology & Applications</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Role & Responsibilities:</h3><p>Served as a member of the paper revision committee for two international conferences, responsible for reviewing and providing feedback on submitted research papers.</p><h3 style="margin-top:1.5rem; color:var(--mauve)">Key Contributions:</h3><ul style="line-height: 2;"><li>Reviewed multiple research papers for technical accuracy and clarity</li><li>Provided constructive feedback to authors for paper improvement</li><li>Collaborated with academic committee members in evaluation process</li><li>Contributed to maintaining high conference publication standards</li></ul><h3 style="margin-top:1.5rem; color:var(--mauve)">Skills Demonstrated:</h3><ul style="line-height: 2;"><li>Technical writing and review</li><li>Critical analysis and evaluation</li><li>Academic research standards</li><li>Professional communication</li></ul>`,
 };
 
-function openModal(type) {
-  document.getElementById("modalBody").innerHTML =
-    modalContent[type] || "<h2>Content not found</h2>";
-  document.getElementById("modal").style.display = "block";
-  document.body.style.overflow = "hidden";
+// ─── MODAL CONTENT ─────────────────────────────────────
+const modalData = {
+  exp1: {
+    id: `<h2>🔥 PT Energi Negeri Meusenia (ENERMA)</h2><p><strong>Magang Data Analyst</strong> · Sept 2025 – Present · South Jakarta (Hybrid)</p><h3>Tanggung Jawab & Pencapaian</h3><ul><li><strong>Konsolidasi Data:</strong> Mengumpulkan dan mengkonsolidasikan data operasional dari berbagai wilayah dan departemen untuk mendukung analisis strategis</li><li><strong>Dashboard Otomatis:</strong> Membangun dashboard otomatis yang merangkum KPI komersial, operasional, dan keuangan untuk tinjauan eksekutif</li><li><strong>Analisis Kinerja:</strong> Melakukan analisis kinerja dan mempresentasikan wawasan actionable kepada Direksi, meningkatkan efisiensi pelaporan sebesar 15%</li></ul>`,
+    en: `<h2>🔥 PT Energi Negeri Meusenia (ENERMA)</h2><p><strong>Data Analyst Intern</strong> · Sept 2025 – Present · South Jakarta (Hybrid)</p><h3>Responsibilities & Achievements</h3><ul><li><strong>Data Consolidation:</strong> Collected and consolidated operational data across multiple regions for strategic analysis</li><li><strong>Automated Dashboards:</strong> Built automated dashboards summarizing commercial, operational, and financial KPIs for executive review</li><li><strong>Performance Analysis:</strong> Conducted analysis and presented actionable insights to the Board of Directors, improving reporting efficiency by 15%</li></ul>`
+  },
+  exp2: {
+    id: `<h2>✈️ PT Pelita Air Service</h2><p><strong>Magang Data Analyst</strong> · Jul – Sept 2024 · Jakarta Pusat (Onsite)</p><h3>Tanggung Jawab</h3><ul><li><strong>Dashboard Interaktif:</strong> Merancang dan mengimplementasikan dashboard interaktif untuk divisi keuangan, penjualan, dan kargo menggunakan Excel dan Tableau</li><li><strong>Analisis Aset IT:</strong> Menganalisis 2.000+ catatan aset IT untuk menilai siklus hidup peralatan dan kinerja vendor</li><li><strong>Pengumpulan Kebutuhan:</strong> Mengembangkan user stories dan diagram alur untuk menyederhanakan pengumpulan kebutuhan</li><li><strong>Standardisasi Proses:</strong> Menyusun panduan SDLC yang disesuaikan untuk menstandarisasi proses pengembangan internal</li></ul><h3>Teknologi</h3><p>Excel · Tableau · SQL · Documentation Tools</p>`,
+    en: `<h2>✈️ PT Pelita Air Service</h2><p><strong>Data Analyst Intern</strong> · Jul – Sept 2024 · Central Jakarta (Onsite)</p><h3>Responsibilities</h3><ul><li><strong>Interactive Dashboards:</strong> Designed interactive dashboards for finance, sales, and cargo divisions using Excel and Tableau</li><li><strong>IT Asset Analysis:</strong> Analyzed 2,000+ IT asset records to assess equipment lifecycle and vendor performance</li><li><strong>Requirements Gathering:</strong> Developed user stories and workflow diagrams to streamline requirements gathering</li><li><strong>Process Standardization:</strong> Drafted tailored SDLC guideline to standardize internal development processes</li></ul><h3>Technologies</h3><p>Excel · Tableau · SQL · Documentation Tools</p>`
+  },
+  exp3: {
+    id: `<h2>💻 Asisten Praktikum — Lab Informatika</h2><p><strong>Telkom University</strong> · Feb 2024 – Jun 2025 · Bandung (Onsite)</p><h3>Mata Kuliah</h3><ul><li><strong>Praktikum Sistem Operasi</strong> — Sept 2024 – Jun 2025 (Xinu OS)</li><li><strong>Praktikum Pemrograman Berorientasi Objek (PBO)</strong> — Feb 2024 – Jan 2025 (Java)</li><li><strong>Praktikum Dasar Kecerdasan Artifisial (DKA)</strong> — Feb 2025 – Jun 2025 (Python)</li></ul><h3>Pencapaian</h3><ul><li>Membimbing 100+ mahasiswa dalam sesi lab mingguan</li><li>Memberikan sesi debugging langsung dan bantuan implementasi hands-on</li><li>Mengevaluasi tugas lab mahasiswa dan memberikan umpan balik terstruktur</li></ul>`,
+    en: `<h2>💻 Practicum Assistant — Informatics Lab</h2><p><strong>Telkom University</strong> · Feb 2024 – Jun 2025 · Bandung (Onsite)</p><h3>Courses Assisted</h3><ul><li><strong>Operating System Practicum</strong> — Sept 2024 – Jun 2025 (Xinu OS)</li><li><strong>Object-Oriented Programming Practicum</strong> — Feb 2024 – Jan 2025 (Java)</li><li><strong>Basic Artificial Intelligence Practicum</strong> — Feb 2025 – Jun 2025 (Python)</li></ul><h3>Achievements</h3><ul><li>Guided 100+ students in weekly lab sessions</li><li>Delivered live debugging sessions and hands-on implementation assistance</li><li>Evaluated lab submissions and provided structured, constructive feedback</li></ul>`
+  },
+  exp4: {
+    id: `<h2>✈️ PT Pelita Air Service</h2><p><strong>Magang Data Analyst</strong> · Jan – Feb 2024 · Jakarta Pusat (Onsite)</p><h3>Deskripsi</h3><p>Pengalaman magang awal di PT Pelita Air Service yang menjadi fondasi kemampuan analisis data dan pembuatan laporan dalam lingkungan industri penerbangan.</p>`,
+    en: `<h2>✈️ PT Pelita Air Service</h2><p><strong>Data Analyst Intern</strong> · Jan – Feb 2024 · Central Jakarta (Onsite)</p><h3>Overview</h3><p>Initial internship experience at PT Pelita Air Service, building foundational data analysis and reporting skills in an aviation industry environment.</p>`
+  },
+  exp5: {
+    id: `<h2>👩‍🏫 Asisten Pengajaran</h2><p><strong>Telkom University</strong> · Sept 2023 – Jan 2025 · 6 Mata Kuliah, 4 Semester</p><h3>Mata Kuliah</h3><ul><li>Pengantar Ilmu Data</li><li>Pemrograman Python</li><li>Statistika dan Probabilitas</li><li>Basis Data</li><li>Visualisasi Data</li><li>Machine Learning</li></ul><h3>Pencapaian</h3><ul><li>Membimbing mahasiswa dari berbagai angkatan</li><li>Menyiapkan materi pembelajaran dan modul praktikum</li><li>Memberikan bimbingan individual untuk mahasiswa yang membutuhkan</li></ul>`,
+    en: `<h2>👩‍🏫 Teaching Assistant</h2><p><strong>Telkom University</strong> · Sept 2023 – Jan 2025 · 6 Courses, 4 Semesters</p><h3>Courses</h3><ul><li>Introduction to Data Science</li><li>Python Programming</li><li>Statistics and Probability</li><li>Database Systems</li><li>Data Visualization</li><li>Machine Learning</li></ul><h3>Achievements</h3><ul><li>Mentored students across multiple cohorts</li><li>Prepared learning materials and practicum modules</li><li>Provided individual guidance for students who needed extra support</li></ul>`
+  },
+  project1: {
+    id: `<h2>❤️ Klasifikasi Penyakit Jantung</h2><p><strong>Dipublikasikan di IEEE · ICICyTA 2024</strong></p><h3>Ikhtisar</h3><p>Penelitian ini mengoptimalkan klasifikasi penyakit jantung menggunakan Random Forest dengan pendekatan Evolutionary Boosting yang inovatif, mencapai akurasi test 86.67%.</p><h3>Metodologi</h3><ul><li>AutoML untuk pemilihan model</li><li>Random Forest sebagai classifier utama</li><li>Evolutionary Boosting untuk optimasi</li><li>Cross-validation 10-fold</li></ul><h3>Hasil</h3><ul><li>Akurasi test: 86.67%</li><li>Diterima di IEEE Xplore</li><li>Best Presenter Award di ICICyTA 2024</li></ul>`,
+    en: `<h2>❤️ Heart Disease Classification</h2><p><strong>Published at IEEE · ICICyTA 2024</strong></p><h3>Overview</h3><p>This research optimizes heart disease classification using Random Forest with an innovative Evolutionary Boosting approach, achieving 86.67% test accuracy.</p><h3>Methodology</h3><ul><li>AutoML for model selection</li><li>Random Forest as the primary classifier</li><li>Evolutionary Boosting for optimization</li><li>10-fold cross-validation</li></ul><h3>Results</h3><ul><li>Test Accuracy: 86.67%</li><li>Accepted at IEEE Xplore</li><li>Best Presenter Award at ICICyTA 2024</li></ul>`
+  },
+  project2: {
+    id: `<h2>👶 Klasifikasi Gizi Anak</h2><p><strong>Dipublikasikan di JCSE Scopus · 2025</strong></p><h3>Ikhtisar</h3><p>Model multiclass untuk memprediksi status gizi anak Indonesia menggunakan KNN dengan teknik SMOTE untuk mengatasi ketidakseimbangan kelas, mencapai akurasi 97.59%.</p><h3>Metodologi</h3><ul><li>K-Nearest Neighbors (KNN) classifier</li><li>SMOTE untuk data balancing</li><li>Feature engineering dari data antropometri</li></ul><h3>Hasil</h3><ul><li>Akurasi: 97.59%</li><li>Dipublikasikan di JCSE Scopus Vol. 18, No. 4</li></ul>`,
+    en: `<h2>👶 Child Nutrition Classification</h2><p><strong>Published in JCSE Scopus · 2025</strong></p><h3>Overview</h3><p>Multiclass model predicting Indonesian children's nutritional status using KNN with SMOTE technique for class imbalance, achieving 97.59% accuracy.</p><h3>Methodology</h3><ul><li>K-Nearest Neighbors (KNN) classifier</li><li>SMOTE for data balancing</li><li>Feature engineering from anthropometric data</li></ul><h3>Results</h3><ul><li>Accuracy: 97.59%</li><li>Published in JCSE Scopus Vol. 18, No. 4</li></ul>`
+  },
+  project3: {
+    id: `<h2>⛏️ Dashboard BI Pertambangan</h2><p><strong>PT Kamalindo Sompurna · Power BI</strong></p><h3>Ikhtisar</h3><p>Dashboard monitoring produksi batu bara real-time yang memungkinkan manajemen PT Kamalindo Sompurna memantau KPI operasional secara langsung.</p><h3>Fitur</h3><ul><li>Monitoring produksi real-time</li><li>Analisis efisiensi per lokasi tambang</li><li>Laporan harian & bulanan otomatis</li><li>Alert sistem untuk deviasi target</li></ul>`,
+    en: `<h2>⛏️ Mining BI Dashboard</h2><p><strong>PT Kamalindo Sompurna · Power BI</strong></p><h3>Overview</h3><p>Real-time coal production monitoring dashboard enabling PT Kamalindo Sompurna management to track operational KPIs live.</p><h3>Features</h3><ul><li>Real-time production monitoring</li><li>Efficiency analysis per mining location</li><li>Automated daily & monthly reports</li><li>Alert system for target deviations</li></ul>`
+  },
+  project4: {
+    id: `<h2>🛒 UI/UX Marketplace</h2><p><strong>Telkom University · Figma</strong></p><h3>Ikhtisar</h3><p>Desain high-fidelity untuk platform marketplace yang memfasilitasi transaksi jual-beli antara mahasiswa Telkom University.</p><h3>Proses</h3><ul><li>User research & persona development</li><li>Information architecture</li><li>Wireframing & prototyping</li><li>High-fidelity mockup di Figma</li><li>Usability testing</li></ul>`,
+    en: `<h2>🛒 Marketplace UI/UX</h2><p><strong>Telkom University · Figma</strong></p><h3>Overview</h3><p>High-fidelity design for a marketplace platform facilitating buy/sell transactions between Telkom University students.</p><h3>Process</h3><ul><li>User research & persona development</li><li>Information architecture</li><li>Wireframing & prototyping</li><li>High-fidelity mockup in Figma</li><li>Usability testing</li></ul>`
+  },
+  project5: {
+    id: `<h2>⚡ Optimasi Distribusi LNG</h2><p><strong>Data Engineering · Python</strong></p><h3>Ikhtisar</h3><p>Pipeline data engineering lengkap menggunakan K-Means clustering untuk mengidentifikasi lokasi optimal gudang sub-pengisian LNG di Jawa Barat (Cianjur, Sukabumi, Bandung Barat).</p><h3>Pipeline Teknis</h3><ul><li>Web scraping data SPPG</li><li>Geocoding GPS via Nominatim</li><li>Kalkulasi jarak Haversine ke 3 stasiun pengisian</li><li>Visualisasi peta dengan Folium</li><li>K-Means clustering untuk rekomendasi lokasi</li></ul><h3>Hasil Utama</h3><p>K-Means merekomendasikan Kelurahan Sayang — secara signifikan mengungguli lokasi eksisting yang dipilih secara intuitif (Pasar Gekbrong).</p>`,
+    en: `<h2>⚡ LNG Distribution Optimizer</h2><p><strong>Data Engineering · Python</strong></p><h3>Overview</h3><p>Complete data engineering pipeline using K-Means clustering to identify optimal LNG sub-bottling warehouse locations in West Java (Cianjur, Sukabumi, Bandung Barat).</p><h3>Technical Pipeline</h3><ul><li>SPPG web scraping</li><li>GPS geocoding via Nominatim</li><li>Haversine distance calculation to 3 filling stations</li><li>Map visualization with Folium</li><li>K-Means clustering for location recommendation</li></ul><h3>Key Result</h3><p>K-Means recommended Kelurahan Sayang — significantly outperforming the existing gut-feel location (Pasar Gekbrong).</p>`
+  },
+  org1: {
+    id: `<h2>🎓 GDSC Telkom University</h2><p><strong>Anggota ML Path</strong> · Des 2023 – Jun 2025</p><p>Berpartisipasi dalam workshop machine learning dan proyek kolaboratif di Google Developer Student Club. Mempelajari teknik ML terbaru dan best practices dalam pengembangan software.</p>`,
+    en: `<h2>🎓 GDSC Telkom University</h2><p><strong>ML Path Member</strong> · Dec 2023 – Jun 2025</p><p>Participated in machine learning workshops and collaborative projects at Google Developer Student Club. Learned latest ML techniques and software development best practices.</p>`
+  },
+  org2: {
+    id: `<h2>📋 PERMIDSI 2024</h2><p><strong>Sekretaris I</strong> · Nov 2023 – Feb 2024</p><p>Mengelola tugas administratif dan koordinasi untuk acara data science tahunan, memastikan semua dokumentasi dan komunikasi berjalan lancar antara divisi.</p>`,
+    en: `<h2>📋 PERMIDSI 2024</h2><p><strong>Secretary I</strong> · Nov 2023 – Feb 2024</p><p>Managed administrative tasks and coordination for the annual data science event, ensuring smooth documentation and communication between divisions.</p>`
+  },
+  org3: {
+    id: `<h2>🔬 Big Data Lab</h2><p><strong>Anggota Lab — Data Warehouse</strong> · Agu 2023 – Des 2024</p><p>Melakukan penelitian dan membantu proyek analitik big data di laboratorium, dengan fokus pada data warehousing dan teknik penyimpanan data skala besar.</p>`,
+    en: `<h2>🔬 Big Data Lab</h2><p><strong>Laboratory Member — Data Warehouse</strong> · Aug 2023 – Dec 2024</p><p>Conducted research and assisted in big data analytics projects in the lab, focusing on data warehousing and large-scale data storage techniques.</p>`
+  }
+};
+
+// ─── STATE ──────────────────────────────────────────────
+let currentPage = 'home';
+let currentLang = 'id';
+let currentTheme = localStorage.getItem('theme') || 'light';
+
+// ─── INIT ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme(currentTheme);
+  applyLang(currentLang);
+  initCursor();
+  initSparkle();
+  initTypewriter();
+  goTo('home', false);
+
+  // Restore lang from storage
+  const savedLang = localStorage.getItem('lang') || 'id';
+  setLang(savedLang);
+});
+
+// ─── NAVIGATION (SPA) ──────────────────────────────────
+function goTo(pageId, animate = true) {
+  if (currentPage === pageId && animate) return;
+
+  // Deactivate old page
+  const oldPage = document.querySelector('.page.active');
+  if (oldPage) {
+    oldPage.classList.remove('active');
+  }
+
+  // Activate new page
+  const newPage = document.getElementById('page-' + pageId);
+  if (!newPage) return;
+
+  if (animate) {
+    newPage.style.opacity = '0';
+    newPage.style.transform = 'translateY(20px)';
+    newPage.classList.add('active');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        newPage.style.opacity = '';
+        newPage.style.transform = '';
+      });
+    });
+  } else {
+    newPage.classList.add('active');
+  }
+
+  currentPage = pageId;
+
+  // Update sidebar nav
+  document.querySelectorAll('.nav-item, .bnav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === pageId);
+  });
+
+  // Reset scroll on page
+  newPage.scrollTop = 0;
+
+  // Trigger skill bars if skills page
+  if (pageId === 'skills') {
+    setTimeout(() => {
+      document.querySelectorAll('.skill-fill').forEach(el => {
+        el.style.animationPlayState = 'running';
+      });
+    }, 300);
+  }
+}
+
+// ─── EXPERIENCE TAB ────────────────────────────────────
+function switchExpTab(tabName) {
+  document.querySelectorAll('.exp-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', (i === 0 && tabName === 'professional') || (i === 1 && tabName === 'organization'));
+  });
+  document.querySelectorAll('.exp-panel').forEach(panel => {
+    panel.classList.remove('active');
+  });
+  const panel = document.getElementById('exp-' + tabName);
+  if (panel) panel.classList.add('active');
+}
+
+// ─── MODAL ─────────────────────────────────────────────
+function openExpModal(id) {
+  const data = modalData[id];
+  if (!data) return;
+  const lang = currentLang;
+  const content = data[lang] || data.en;
+  document.getElementById('modalBody').innerHTML = content;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
-  document.getElementById("modal").style.display = "none";
-  document.body.style.overflow = "auto";
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-window.onclick = function (e) {
-  if (e.target == document.getElementById("modal")) closeModal();
-};
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
 
-// ============================================
-// DUAL GALLERY SLIDER - Professional & Organization
-// ============================================
-
-// Gallery Data - PROFESSIONAL
-const galleryImagesProfessional = [
-  {
-    src: '/Users/keyla/Downloads/aqeelafn/image/enerma.jpeg', // Ganti dengan path foto Anda
-    caption: 'Data Analyst - PT Energi Negeri Meusenia'
-  },
-  {
-    src: '/Users/keyla/Downloads/aqeelafn/image/pelita.jpeg',
-    caption: 'Data Analyst - PT Pelita Air Service'
-  },
-  {
-    src: '/Users/keyla/Downloads/aqeelafn/image/asprak.jpeg',
-    caption: 'Practicum Assistant - Informatics Lab Telkom University'
-  },
-  {
-    src: '/Users/keyla/Downloads/aqeelafn/image/asdos.jpg',
-    caption: 'Lecturer Assistant - Telkom University'
-  },
-  {
-    src: '/Users/keyla/Downloads/aqeelafn/image/pelita1.JPG',
-    caption: 'Data Analyst - PT Pelita Air Service'
-  },
-  {
-    src: 'images/professional/teaching1.jpg',
-    caption: 'Teaching Assistant - Classroom Session'
-  },
-  {
-    src: 'images/professional/teaching2.jpg',
-    caption: 'Mentoring Students in Programming'
-  },
-  {
-    src: 'images/professional/workspace.jpg',
-    caption: 'My Data Analysis Workspace'
-  }
-];
-
-// Gallery Data - ORGANIZATION
-const galleryImagesOrganization = [
-  {
-    src: 'images/org-photos/gdsc.jpg',
-    caption: 'GDSC Telkom University - ML Workshop'
-  },
-  {
-    src: 'images/org-photos/permidsi2024.jpg',
-    caption: 'PERMIDSI 2024 - Secretary Team'
-  },
-  {
-    src: 'images/org-photos/bigdata.jpg',
-    caption: 'Big Data Lab Activities'
-  },
-  {
-    src: 'images/org-photos/galaksi.jpg',
-    caption: 'GALAKSI 2023 - Committee'
-  },
-  {
-    src: 'images/org-photos/pkkmb-ds.jpg',
-    caption: 'PKKMB Data Science 2023'
-  },
-  {
-    src: 'images/org-photos/pkkmb-telkom.jpg',
-    caption: 'PKKMB Telkom University'
-  },
-  {
-    src: 'images/org-photos/permidsi2023.jpg',
-    caption: 'PERMIDSI 2023 - Team Photo'
-  },
-  {
-    src: 'images/org-photos/hima.jpg',
-    caption: 'Formatur HIMA DS'
-  },
-  {
-    src: 'images/org-photos/feeds.jpg',
-    caption: 'FEEDS 2022 Event'
-  }
-];
-
-let currentSlideProfessional = 0;
-let currentSlideOrganization = 0;
-
-// ============================================
-// PROFESSIONAL GALLERY FUNCTIONS
-// ============================================
-
-function initGalleryProfessional() {
-  const slider = document.getElementById('gallerySliderProfessional');
-  const indicatorsContainer = document.getElementById('indicatorsProfessional');
-  
-  if (!slider || !indicatorsContainer) return;
-
-  slider.innerHTML = '';
-  indicatorsContainer.innerHTML = '';
-
-  galleryImagesProfessional.forEach(image => {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.innerHTML = `
-      <img src="${image.src}" alt="${image.caption}" onerror="this.src='https://via.placeholder.com/400x300/d4a5a5/ffffff?text=Professional+Photo'">
-      <div class="gallery-caption">${image.caption}</div>
-    `;
-    slider.appendChild(item);
-  });
-
-  const totalPages = Math.ceil(galleryImagesProfessional.length / 3);
-  for (let i = 0; i < totalPages; i++) {
-    const indicator = document.createElement('div');
-    indicator.className = 'indicator' + (i === 0 ? ' active' : '');
-    indicator.onclick = () => goToSlideProfessional(i);
-    indicatorsContainer.appendChild(indicator);
-  }
-
-  // Add swipe functionality
-  addSwipeListeners('gallerySliderProfessional', 'professional');
+// ─── DARK / LIGHT MODE ─────────────────────────────────
+function toggleTheme() {
+  currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+  applyTheme(currentTheme);
+  localStorage.setItem('theme', currentTheme);
 }
 
-function updateSliderProfessional() {
-  const slider = document.getElementById('gallerySliderProfessional');
-  if (!slider) return;
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  currentTheme = theme;
+}
 
-  const items = slider.querySelectorAll('.gallery-item');
-  if (items.length === 0) return;
+// ─── LANGUAGE ──────────────────────────────────────────
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.setAttribute('data-lang', lang);
+  applyLang(lang);
 
-  const itemWidth = items[0].offsetWidth;
-  const gap = 24;
-  const offset = currentSlideProfessional * (itemWidth * 3 + gap * 3);
-  slider.style.transform = `translateX(-${offset}px)`;
-
-  document.querySelectorAll('#indicatorsProfessional .indicator').forEach((ind, idx) => {
-    ind.classList.toggle('active', idx === currentSlideProfessional);
+  // Update button states
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
   });
 }
 
-function nextSlideProfessional() {
-  const maxSlide = Math.ceil(galleryImagesProfessional.length / 3) - 1;
-  currentSlideProfessional = (currentSlideProfessional + 1) > maxSlide ? 0 : currentSlideProfessional + 1;
-  updateSliderProfessional();
-}
-
-function prevSlideProfessional() {
-  const maxSlide = Math.ceil(galleryImagesProfessional.length / 3) - 1;
-  currentSlideProfessional = currentSlideProfessional === 0 ? maxSlide : currentSlideProfessional - 1;
-  updateSliderProfessional();
-}
-
-function goToSlideProfessional(index) {
-  currentSlideProfessional = index;
-  updateSliderProfessional();
-}
-
-// ============================================
-// ORGANIZATION GALLERY FUNCTIONS
-// ============================================
-
-function initGalleryOrganization() {
-  const slider = document.getElementById('gallerySliderOrganization');
-  const indicatorsContainer = document.getElementById('indicatorsOrganization');
-  
-  if (!slider || !indicatorsContainer) return;
-
-  slider.innerHTML = '';
-  indicatorsContainer.innerHTML = '';
-
-  galleryImagesOrganization.forEach(image => {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.innerHTML = `
-      <img src="${image.src}" alt="${image.caption}" onerror="this.src='https://via.placeholder.com/400x300/9a7b8c/ffffff?text=Organization+Photo'">
-      <div class="gallery-caption">${image.caption}</div>
-    `;
-    slider.appendChild(item);
-  });
-
-  const totalPages = Math.ceil(galleryImagesOrganization.length / 3);
-  for (let i = 0; i < totalPages; i++) {
-    const indicator = document.createElement('div');
-    indicator.className = 'indicator' + (i === 0 ? ' active' : '');
-    indicator.onclick = () => goToSlideOrganization(i);
-    indicatorsContainer.appendChild(indicator);
-  }
-
-  // Add swipe functionality
-  addSwipeListeners('gallerySliderOrganization', 'organization');
-}
-
-function updateSliderOrganization() {
-  const slider = document.getElementById('gallerySliderOrganization');
-  if (!slider) return;
-
-  const items = slider.querySelectorAll('.gallery-item');
-  if (items.length === 0) return;
-
-  const itemWidth = items[0].offsetWidth;
-  const gap = 24;
-  const offset = currentSlideOrganization * (itemWidth * 3 + gap * 3);
-  slider.style.transform = `translateX(-${offset}px)`;
-
-  document.querySelectorAll('#indicatorsOrganization .indicator').forEach((ind, idx) => {
-    ind.classList.toggle('active', idx === currentSlideOrganization);
-  });
-}
-
-function nextSlideOrganization() {
-  const maxSlide = Math.ceil(galleryImagesOrganization.length / 3) - 1;
-  currentSlideOrganization = (currentSlideOrganization + 1) > maxSlide ? 0 : currentSlideOrganization + 1;
-  updateSliderOrganization();
-}
-
-function prevSlideOrganization() {
-  const maxSlide = Math.ceil(galleryImagesOrganization.length / 3) - 1;
-  currentSlideOrganization = currentSlideOrganization === 0 ? maxSlide : currentSlideOrganization - 1;
-  updateSliderOrganization();
-}
-
-function goToSlideOrganization(index) {
-  currentSlideOrganization = index;
-  updateSliderOrganization();
-}
-
-// ============================================
-// SWIPE/DRAG FUNCTIONALITY
-// ============================================
-
-function addSwipeListeners(sliderId, type) {
-  const slider = document.getElementById(sliderId);
-  if (!slider) return;
-
-  const container = slider.parentElement;
-  let isDragging = false;
-  let startPos = 0;
-  let currentTranslate = 0;
-  let prevTranslate = 0;
-
-  // Touch events
-  container.addEventListener('touchstart', touchStart);
-  container.addEventListener('touchmove', touchMove);
-  container.addEventListener('touchend', touchEnd);
-
-  // Mouse events
-  container.addEventListener('mousedown', touchStart);
-  container.addEventListener('mousemove', touchMove);
-  container.addEventListener('mouseup', touchEnd);
-  container.addEventListener('mouseleave', touchEnd);
-
-  function touchStart(event) {
-    isDragging = true;
-    startPos = getPositionX(event);
-    slider.classList.add('dragging');
-  }
-
-  function touchMove(event) {
-    if (!isDragging) return;
-    const currentPosition = getPositionX(event);
-    currentTranslate = prevTranslate + currentPosition - startPos;
-  }
-
-  function touchEnd() {
-    isDragging = false;
-    slider.classList.remove('dragging');
-    
-    const movedBy = currentTranslate - prevTranslate;
-
-    // If moved enough negative, go to next slide
-    if (movedBy < -50) {
-      if (type === 'professional') {
-        nextSlideProfessional();
-      } else {
-        nextSlideOrganization();
-      }
+function applyLang(lang) {
+  const t = i18n[lang] || i18n.id;
+  document.querySelectorAll('[data-id]').forEach(el => {
+    const key = el.dataset.id;
+    if (t[key] !== undefined) {
+      el.innerHTML = t[key];
     }
+  });
 
-    // If moved enough positive, go to previous slide
-    if (movedBy > 50) {
-      if (type === 'professional') {
-        prevSlideProfessional();
-      } else {
-        prevSlideOrganization();
-      }
-    }
-
-    currentTranslate = 0;
-    prevTranslate = 0;
-  }
-
-  function getPositionX(event) {
-    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-  }
+  // Update typewriter
+  initTypewriter();
 }
 
-// ============================================
-// INITIALIZE ON PAGE LOAD
-// ============================================
+// ─── TYPEWRITER ─────────────────────────────────────────
+let typewriterInterval;
 
-document.addEventListener('DOMContentLoaded', function() {
-  initGalleryProfessional();
-  initGalleryOrganization();
-  
-  // Update sliders on window resize
+function initTypewriter() {
+  const el = document.getElementById('roleText');
+  if (!el) return;
+
+  const roles = currentLang === 'id'
+    ? ['Data Analyst', 'Data Scientist', 'BI Enthusiast', 'ML Researcher']
+    : ['Data Analyst', 'Data Scientist', 'BI Enthusiast', 'ML Researcher'];
+
+  clearInterval(typewriterInterval);
+  let roleIdx = 0, charIdx = 0, deleting = false;
+
+  function type() {
+    const current = roles[roleIdx];
+    if (deleting) {
+      el.textContent = current.substring(0, charIdx--);
+      if (charIdx < 0) { deleting = false; roleIdx = (roleIdx + 1) % roles.length; charIdx = 0; }
+    } else {
+      el.textContent = current.substring(0, ++charIdx);
+      if (charIdx === current.length) { deleting = true; setTimeout(() => {}, 1200); }
+    }
+  }
+
+  typewriterInterval = setInterval(() => {
+    type();
+  }, deleting ? 60 : 100);
+
+  // Better version with pauses
+  clearInterval(typewriterInterval);
+  let ri = 0, ci = 0, del = false, pausing = false;
+
+  function typeStep() {
+    if (pausing) return;
+    const role = roles[ri];
+    if (!del) {
+      el.textContent = role.substring(0, ++ci);
+      if (ci === role.length) { pausing = true; setTimeout(() => { del = true; pausing = false; }, 1800); }
+    } else {
+      el.textContent = role.substring(0, --ci);
+      if (ci === 0) { del = false; ri = (ri + 1) % roles.length; }
+    }
+  }
+  typewriterInterval = setInterval(typeStep, del ? 50 : 90);
+
+  // Restart cleanly
+  clearInterval(typewriterInterval);
+  ri = 0; ci = 0; del = false; pausing = false;
+  typewriterInterval = setInterval(typeStep, 90);
+}
+
+// ─── CUSTOM CURSOR ─────────────────────────────────────
+function initCursor() {
+  const ring = document.getElementById('cursorRing');
+  if (!ring || window.matchMedia('(max-width: 768px)').matches) return;
+
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+  });
+
+  function animateCursor() {
+    rx += (mx - rx) * 0.14;
+    ry += (my - ry) * 0.14;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.querySelectorAll('a, button, .nav-item, .exp-card, .project-card, .org-card, .contact-card').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('cursor-hover'));
+  });
+}
+
+// ─── SPARKLE CANVAS ────────────────────────────────────
+function initSparkle() {
+  const canvas = document.getElementById('sparkleCanvas');
+  if (!canvas || window.matchMedia('(max-width: 768px)').matches) return;
+
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
   window.addEventListener('resize', () => {
-    updateSliderProfessional();
-    updateSliderOrganization();
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   });
-});
 
-// Auto-slide for Organization (optional - hapus jika tidak mau)
-let autoSlideOrganization = setInterval(nextSlideOrganization, 5000);
+  const sparkles = [];
+  let mouseX = 0, mouseY = 0;
 
-// Pause auto-slide when hovering over gallery
-document.addEventListener('DOMContentLoaded', function() {
-  const professionalGallery = document.querySelector('#professional .gallery-section');
-  const organizationGallery = document.querySelector('#organization .gallery-section');
-  
-  if (professionalGallery) {
-    professionalGallery.addEventListener('mouseenter', () => {
-      clearInterval(autoSlideProfessional);
-    });
-    
-    professionalGallery.addEventListener('mouseleave', () => {
-      autoSlideProfessional = setInterval(nextSlideProfessional, 5000);
-    });
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    if (Math.random() < 0.35) {
+      sparkles.push({
+        x: mouseX + (Math.random() - 0.5) * 20,
+        y: mouseY + (Math.random() - 0.5) * 20,
+        size: Math.random() * 3 + 1,
+        life: 1,
+        decay: Math.random() * 0.03 + 0.02,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: -Math.random() * 1.5 - 0.5,
+        color: ['#d4897a', '#c9a96e', '#b09fc0', '#e8c5bb'][Math.floor(Math.random() * 4)]
+      });
+    }
+    if (sparkles.length > 80) sparkles.splice(0, 10);
+  });
+
+  function drawSparkles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = sparkles.length - 1; i >= 0; i--) {
+      const s = sparkles[i];
+      s.x += s.vx; s.y += s.vy; s.life -= s.decay;
+      if (s.life <= 0) { sparkles.splice(i, 1); continue; }
+
+      ctx.save();
+      ctx.globalAlpha = s.life;
+      ctx.fillStyle = s.color;
+
+      // Draw star/sparkle shape
+      ctx.translate(s.x, s.y);
+      ctx.beginPath();
+      const spikes = 4, outer = s.size, inner = s.size * 0.4;
+      for (let j = 0; j < spikes * 2; j++) {
+        const r = j % 2 === 0 ? outer : inner;
+        const a = (j / (spikes * 2)) * Math.PI * 2 - Math.PI / 2;
+        j === 0 ? ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r) : ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    requestAnimationFrame(drawSparkles);
   }
-  
-  if (organizationGallery) {
-    organizationGallery.addEventListener('mouseenter', () => {
-      clearInterval(autoSlideOrganization);
-    });
-    
-    organizationGallery.addEventListener('mouseleave', () => {
-      autoSlideOrganization = setInterval(nextSlideOrganization, 5000);
-    });
-  }
-});
+  drawSparkles();
+}
